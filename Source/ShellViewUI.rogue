@@ -13,11 +13,4 @@ class ShellViewUI : ConsoleUI [singleton]
       scroll_view = UIScrollView( bitmap_view )
       add( scroll_view )
 
-    method on( e:PointerEvent )
-      if (e.is_press(0))
-        ConsoleUICanvas.clear( StyledCharacter(' ',CharacterStyle.BG_BLUE) )
-      elseIf (e.is_press(1))
-        ConsoleUICanvas.clear( StyledCharacter(' ',CharacterStyle.BG_RED) )
-      endIf
-
 endClass

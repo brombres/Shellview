@@ -8,7 +8,7 @@ $requireRogue "1.9.6"
 $include "ANSIColor.rogue"
 $include "BitmapView.rogue"
 $include "ShellViewUI.rogue"
-$include "TextBitmap.rogue"
+$include "ANSIBitmap.rogue"
 
 uses Bitmap
 uses UI/ConsoleUI
@@ -37,7 +37,7 @@ class ShellView
       ShellViewUI.bitmap_view.set_bitmap( Bitmap(File("~/Desktop/U5.bmp")) )
       ShellViewUI.run
 
-      #local bmp = TextBitmap( Bitmap(File("~/Desktop/U5.bmp")) )
+      #local bmp = ANSIBitmap( Bitmap(File("~/Desktop/U5.bmp")) )
       #trace bmp.width, bmp.height
       #bmp.display
 

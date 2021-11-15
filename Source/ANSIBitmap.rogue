@@ -4,7 +4,7 @@ uses UI/ConsoleUI
 uses Utility/Epilog
 uses Utility/TextCanvas
 
-class TextBitmap
+class ANSIBitmap
   PROPERTIES
     source : Bitmap  # the true-color source bitmap
     width  : Int32
@@ -17,6 +17,7 @@ class TextBitmap
       height = source.height
       pixels = Byte[]( width*(height+(height&1)) )
       pixels.count = width*height
+      loop (width * (height&1)) pixels.add(1)  # odd # pixels get black bottom
       local lookup = ANSIColorLookup.data
       native @|RogueInt32* src = $source->pixels->data->as_int32s - 1;
               |RogueByte* dest = $pixels->data->as_bytes - 1;
@@ -27,35 +28,27 @@ class TextBitmap
               |  *(++dest) = lookup[ *(++src) & 0xFFffFF ];
               |}
 
-    method display
-      local index = 0
-      forEach (j in 0..<height)
-        forEach (i in 0..<width)
-          ConsoleStyle.print( ANSIColor(pixels[index]).bg )
-          ++index
-          print ' '
-        endForEach
-        ConsoleStyle.bg_default
-        println
-      endForEach
+    method to->TextCanvas
+      local canvas = TextCanvas( width, (height+1)/2 )
+      local canvas_data = canvas.buffer
 
-    method draw( canvas:TextCanvas, cursor:XY )
       localize width
-      local x = Int32(cursor.x)
-      local y = Int32(cursor.y)
-      local index = 0
+      local src_index = 0
+      local dest_index = 0
       local FG_SHIFT = CharacterStyle.FG_SHIFT
       local BG_SHIFT = CharacterStyle.BG_SHIFT
-      forEach (j in 0..<height/2)
+      forEach (j in 0..<(height+1)/2)
         forEach (i in 0..<width)
-          local bg = (pixels[index] + 1)       :<<: BG_SHIFT
-          local fg = (pixels[index+width] + 1) :<<: FG_SHIFT
-          ++index
-          local ch = StyledCharacter( '\[2584]', bg | fg )
-          ConsoleUICanvas.set( x+i, y+j, ch )
+          local bg = (pixels[src_index])       :<<: BG_SHIFT
+          local fg = (pixels[src_index+width]) :<<: FG_SHIFT
+          canvas_data[ dest_index ] = StyledCharacter( '\[2584]', bg | fg )
+          ++src_index
+          ++dest_index
         endForEach
-        index += width
+        src_index += width
       endForEach
+
+      return canvas
 
     method size->XY
       return XY(width,height)

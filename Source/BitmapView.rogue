@@ -4,18 +4,50 @@ uses Utility/TextCanvas
 
 class BitmapView : UIComponent
   PROPERTIES
-    bitmap      : Bitmap
-    text_bitmap : TextBitmap
+    bitmap        : Bitmap
+    text_bitmap   : TextCanvas
+    min_scale     : Real64
+    max_scale     : Real64
+    scale         : Real64
+    bitmap_size   : XY
+    origin        = Anchor.CENTER : Anchor
 
   METHODS
     method init
+      expand_to_fill
 
     method set_bitmap( @bitmap )
-      text_bitmap  = TextBitmap( bitmap )
-      fixed_width  = bitmap.width
-      fixed_height = (bitmap.height + 1) / 2
+      request_layout
+
+    method on( e:KeyEvent )
+      if (e.is_press(Keycode.Q)) System.exit
+
+    method on( e:PointerEvent )
+      request_redraw
+      #{
+      if (e.is_press(0))
+        ConsoleUICanvas.clear( StyledCharacter(' ',CharacterStyle.BG_BLUE) )
+      elseIf (e.is_press(1))
+        ConsoleUICanvas.clear( StyledCharacter(' ',CharacterStyle.BG_RED) )
+      endIf
+      }#
+
+    method after_update_layout
+      bitmap_size = XY( bitmap.width, (bitmap.height+1)/2 )
+      min_scale = (size / bitmap_size).min.clamped_high(1)
+      max_scale = 1.0
+      if (scale) scale .= clamped(min_scale,max_scale)
+      local new_size = (bitmap.size * which{ scale || min_scale }).floor
+      if (not text_bitmap or text_bitmap.width != new_size.x or text_bitmap.height != new_size.y)
+        text_bitmap  = ANSIBitmap( bitmap.resized(new_size) )->TextCanvas
+      endIf
 
     method on_draw
-      text_bitmap.draw( ConsoleUICanvas, XY.zero )
+      if (size.min == 0 or not text_bitmap) return
+
+      ConsoleUICanvas.fill( display_bounds, ' ' )
+      local bitmap_bounds = Box(0,0,text_bitmap.size).positioned_within( bounds, origin ).floor
+      ConsoleUICanvas.draw( text_bitmap, bitmap_bounds.position )
+
 endClass
 
