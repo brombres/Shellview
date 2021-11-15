@@ -1,0 +1,78 @@
+uses Utility/Best
+
+enum ANSIColor( color:Int32, fg:Int32, bg:Int32 ) [api]
+  BLACK       ( 0xFF000000, 30, 40 )
+  DARK_RED    ( 0xFF990000, 31, 41 )
+  DARK_GREEN  ( 0xFF00A600, 32, 42 )
+  DARK_YELLOW ( 0xFF999900, 33, 43 )
+  DARK_BLUE   ( 0xFF0000B0, 34, 44 )
+  DARK_PURPLE ( 0xFFB000B0, 35, 45 )
+  DARK_CYAN   ( 0xFF00A0B0, 36, 46 )
+  LIGHT_GRAY  ( 0xFFBBBBBB, 37, 47 )
+
+  DARK_GRAY   ( 0xFF666666, 90, 100 )
+  RED         ( 0xFFE60000, 91, 101 )
+  GREEN       ( 0xFF00DD00, 92, 102 )
+  YELLOW      ( 0xFFE6E600, 93, 103 )
+  BLUE        ( 0xFF0000FF, 94, 104 )
+  PURPLE      ( 0xFFE600E6, 95, 105 )
+  CYAN        ( 0xFF00E6E6, 96, 106 )
+  WHITE       ( 0xFFFFFFFF, 97, 107 )
+endEnum
+
+class ANSIColorLookup : Byte[] [singleton]
+  METHODS
+    method init
+      prior.init( 256*256*256 )
+      count = 256*256*256
+
+      local target_colors = Int32[]
+      target_colors.add( ANSIColor(forEach in 0..15).color )
+
+      native @|RogueInt32* target_colors = $target_colors->data->as_int32s;
+              |RogueByte*  mapping = $this->data->as_bytes - 1;
+              |
+              |for (RogueInt32 r=-1; ++r<=255; )
+              |{
+              |  for (RogueInt32 g=-1; ++g<=255; )
+              |  {
+              |    for (RogueInt32 b=-1; ++b<=255; )
+              |    {
+              |      RogueInt32 best_i = -1;
+              |      RogueInt32 best_score = 0;
+              |      for (RogueInt32 i=16; --i>=0; )
+              |      {
+              |        RogueInt32 color = target_colors[i];
+              |        RogueInt32 dr = r - ((color >> 16) & 255);
+              |        RogueInt32 dg = g - ((color >> 8) & 255);
+              |        RogueInt32 db = b - (color & 255);
+              |        RogueInt32 score = dr*dr + dg*dg + db*db;
+              |        if (best_i == -1 || score < best_score)
+              |        {
+              |          best_i = i;
+              |          best_score = score;
+              |        }
+              |      }
+              |      *(++mapping) = (RogueByte) best_i;
+              |    }
+              |  }
+              |}
+
+      #{
+      forEach (r in 0..255)
+        forEach (g in 0..255)
+          forEach (b in 0..255)
+            local best = Best<<Int32,Int32>>( (a,b)=>(a < b) )
+            forEach (i in 0..15)
+              local candidate = ANSIColor(i).color
+              local r_delta = r - ((candidate :>>>: 16) & 255)
+              local g_delta = g - ((candidate :>>>: 8) & 255)
+              local b_delta = b - (candidate & 255)
+              best.consider( i, r_delta*r_delta + g_delta*g_delta + b_delta*b_delta )
+            endForEach
+            add( best.value )
+          endForEach
+        endForEach
+      endForEach
+      }#
+endClass

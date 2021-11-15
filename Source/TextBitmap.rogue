@@ -1,0 +1,39 @@
+uses Bitmap
+
+class TextBitmap
+  PROPERTIES
+    source : Bitmap  # the true-color source bitmap
+    width  : Int32
+    height : Int32
+    pixels : Byte[]
+
+  METHODS
+    method init( source )
+      width  = source.width
+      height = source.height
+      pixels = Byte[]( width*height )
+      pixels.count = width*height
+      local lookup = ANSIColorLookup.data
+      native @|RogueInt32* src = $source->pixels->data->as_int32s - 1;
+              |RogueByte* dest = $pixels->data->as_bytes - 1;
+              |RogueByte* lookup = $lookup->as_bytes;
+              |
+              |for (int i=$width*$height; --i>=0; )
+              |{
+              |  *(++dest) = lookup[ *(++src) & 0xFFffFF ];
+              |printf("%d\n",(int)*dest);
+              |}
+
+    method display
+      local index = 0
+      forEach (j in 0..<height)
+        forEach (i in 0..<width)
+          ConsoleStyle.print( ANSIColor(pixels[index]).bg )
+          ++index
+          print ' '
+        endForEach
+        ConsoleStyle.bg_default
+        println
+      endForEach
+endClass
+
