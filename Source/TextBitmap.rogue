@@ -1,4 +1,8 @@
 uses Bitmap
+uses Geometry
+uses UI/ConsoleUI
+uses Utility/Epilog
+uses Utility/TextCanvas
 
 class TextBitmap
   PROPERTIES
@@ -11,7 +15,7 @@ class TextBitmap
     method init( source )
       width  = source.width
       height = source.height
-      pixels = Byte[]( width*height )
+      pixels = Byte[]( width*(height+(height&1)) )
       pixels.count = width*height
       local lookup = ANSIColorLookup.data
       native @|RogueInt32* src = $source->pixels->data->as_int32s - 1;
@@ -21,7 +25,6 @@ class TextBitmap
               |for (int i=$width*$height; --i>=0; )
               |{
               |  *(++dest) = lookup[ *(++src) & 0xFFffFF ];
-              |printf("%d\n",(int)*dest);
               |}
 
     method display
@@ -35,5 +38,27 @@ class TextBitmap
         ConsoleStyle.bg_default
         println
       endForEach
+
+    method draw( canvas:TextCanvas, cursor:XY )
+      localize width
+      local x = Int32(cursor.x)
+      local y = Int32(cursor.y)
+      local index = 0
+      local FG_SHIFT = CharacterStyle.FG_SHIFT
+      local BG_SHIFT = CharacterStyle.BG_SHIFT
+      forEach (j in 0..<height/2)
+        forEach (i in 0..<width)
+          local bg = (pixels[index] + 1)       :<<: BG_SHIFT
+          local fg = (pixels[index+width] + 1) :<<: FG_SHIFT
+          ++index
+          local ch = StyledCharacter( '\[2584]', bg | fg )
+          ConsoleUICanvas.set( x+i, y+j, ch )
+        endForEach
+        index += width
+      endForEach
+
+    method size->XY
+      return XY(width,height)
+
 endClass
 

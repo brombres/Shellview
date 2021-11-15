@@ -5,11 +5,14 @@
 
 $requireRogue "1.9.6"
 
-$include "TextBitmap.rogue"
 $include "ANSIColor.rogue"
+$include "BitmapView.rogue"
+$include "ShellViewUI.rogue"
+$include "TextBitmap.rogue"
 
-uses Utility/CommandLineParser
 uses Bitmap
+uses UI/ConsoleUI
+uses Utility/CommandLineParser
 
 try
   ShellView( System.command_line_arguments )
@@ -31,9 +34,12 @@ class ShellView
         System.exit 0
       endIf
 
-      local bmp = TextBitmap( Bitmap(File("~/Desktop/U5.bmp")) )
-      trace bmp.width, bmp.height
-      bmp.display
+      ShellViewUI.bitmap_view.set_bitmap( Bitmap(File("~/Desktop/U5.bmp")) )
+      ShellViewUI.run
+
+      #local bmp = TextBitmap( Bitmap(File("~/Desktop/U5.bmp")) )
+      #trace bmp.width, bmp.height
+      #bmp.display
 
 
     method parse_args( args:String[] )->Value

@@ -1,0 +1,21 @@
+uses Bitmap
+uses UI/ConsoleUI
+uses Utility/TextCanvas
+
+class BitmapView : UIComponent
+  PROPERTIES
+    bitmap      : Bitmap
+    text_bitmap : TextBitmap
+
+  METHODS
+    method init
+
+    method set_bitmap( @bitmap )
+      text_bitmap  = TextBitmap( bitmap )
+      fixed_width  = bitmap.width
+      fixed_height = (bitmap.height + 1) / 2
+
+    method on_draw
+      text_bitmap.draw( ConsoleUICanvas, XY.zero )
+endClass
+
