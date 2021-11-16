@@ -3,12 +3,12 @@ uses Utility/TextCanvas
 
 class ShellViewUI : ConsoleUI [singleton]
   PROPERTIES
-    bitmap_view : BitmapView
+    bitmap_view : ImageView
 
   METHODS
     method init
       prior.init
-      bitmap_view = BitmapView()
+      bitmap_view = ImageView()
       add( bitmap_view )
 
 endClass
