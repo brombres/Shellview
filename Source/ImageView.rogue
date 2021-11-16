@@ -4,6 +4,7 @@ uses Utility/TextCanvas
 
 class ImageView : UIComponent
   PROPERTIES
+    filepath      : String
     bitmap        : Bitmap
     text_bitmap   : TextCanvas
     min_scale     : Real64
@@ -20,7 +21,12 @@ class ImageView : UIComponent
     method init
       expand_to_fill
 
-    method set_bitmap( @bitmap )
+    method set_image( new_filepath:String )
+      if (new_filepath == filepath) return
+      filepath = new_filepath
+      bitmap = Bitmap( File(filepath) )
+      zoom = 0
+      text_bitmap = null
       request_image_update
 
     method on( e:KeyEvent )
@@ -42,6 +48,12 @@ class ImageView : UIComponent
         zoom_in
       elseIf (e.is_press(Keycode.O) or e.is_press(Keycode.MINUS))
         zoom_out
+      elseIf (e.is_press(Keycode.N))
+        ShellViewUI.filepaths.add( ShellViewUI.filepaths.remove_first )
+        set_image( ShellViewUI.filepaths.last )
+      elseIf (e.is_press(Keycode.B))
+        ShellViewUI.filepaths.insert( ShellViewUI.filepaths.remove_last )
+        set_image( ShellViewUI.filepaths.last )
       endIf
 
     method on( e:PointerEvent )

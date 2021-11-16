@@ -29,15 +29,15 @@ class ShellView
       #trace command
       # has //options and possibly //args
 
-      if (command//options//help)
+      if (command//options//help or command//args.count == 0)
         print_usage
         System.exit 0
       endIf
 
-      #ShellViewUI.bitmap_view.set_bitmap( Bitmap(File("~/Desktop/U5Tiles.png")) )
-      #ShellViewUI.bitmap_view.set_bitmap( Bitmap(File("~/Desktop/DoctorPsycho.png")) )
-      #ShellViewUI.bitmap_view.set_bitmap( Bitmap(File("~/Desktop/Source.jpeg")) )
-      ShellViewUI.bitmap_view.set_bitmap( Bitmap(File("~/Desktop/Gerrymandering.jpeg")) )
+      ShellViewUI.filepaths = command//args.to_list<<String>>
+      ShellViewUI.filepaths.add( ShellViewUI.filepaths.remove_first )
+      ShellViewUI.image_view.set_image( ShellViewUI.filepaths.last )
+
       ShellViewUI.run
 
       #local bmp = ANSIBitmap( Bitmap(File("~/Desktop/U5.bmp")) )
