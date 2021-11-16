@@ -1,0 +1,23 @@
+uses Bitmap
+
+class RGB( red:Real64, green:Real64, blue:Real64 ) [compound]
+  GLOBAL METHODS
+    method create( color:Color )->RGB
+      return RGB( color.red, color.green, color.blue )
+
+  METHODS
+    method description->String
+      return "RGB($,$,$)" (red.format(".2"),green.format(".2"),blue.format(".2"))
+
+    method operator+( other:RGB )->RGB
+      return RGB( red+other.red, green+other.green, blue+other.blue )
+
+    method operator-( other:RGB )->RGB
+      return RGB( red-other.red, green-other.green, blue-other.blue )
+
+    method operator*( value:Real64 )->RGB
+      return RGB( red*value, green*value, blue*value )
+
+    method to->ANSIColor
+      return ANSIColor( ANSIColorLookup[Color(red,green,blue).argb & 0xFFffFF] )
+endClass

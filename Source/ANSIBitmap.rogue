@@ -6,27 +6,76 @@ uses Utility/TextCanvas
 
 class ANSIBitmap
   PROPERTIES
-    source : Bitmap  # the true-color source bitmap
     width  : Int32
     height : Int32
     pixels : Byte[]
 
   METHODS
-    method init( source )
+    method init( source:Bitmap )
       width  = source.width
       height = source.height
-      pixels = Byte[]( width*(height+(height&1)) )
+      pixels = Byte[]( width*(height+(height&1)) )  # round up height to even # pixels
       pixels.count = width*height
-      loop (width * (height&1)) pixels.add(1)  # odd # pixels get black bottom
-      local lookup = ANSIColorLookup.data
-      native @|RogueInt32* src = $source->pixels->data->as_int32s - 1;
-              |RogueByte* dest = $pixels->data->as_bytes - 1;
-              |RogueByte* lookup = $lookup->as_bytes;
-              |
-              |for (int i=$width*$height; --i>=0; )
-              |{
-              |  *(++dest) = lookup[ *(++src) & 0xFFffFF ];
-              |}
+      loop (width * (height&1)) pixels.add(ANSIColor.BLACK->Int32)  # odd # pixels get black bottom
+
+      if (ShellView.command//options//dither)
+        # Convert colors while applying Floyd-Steinberg dithering.
+        # Make alternating/serpentine passes per row.
+        # https://en.wikipedia.org/wiki/Floyd%E2%80%93Steinberg_dithering
+        local error = Dim<<RGB>>( (width+2) * (height+1) )
+
+        local src_data  = source.pixels.data
+        local src_i     = 0
+        local src_w     = width
+        local dest_data = pixels.data
+        local err_data  = error.data
+        local err_i     = 1
+        local err_w     = width + 2
+        loop height/2  # assumes even number of lines
+          # Left to Right
+          loop width
+            local original = RGB( src_data[src_i] )
+            local ansi  = (original + err_data[err_i])->ANSIColor
+            local diff = original - RGB(ansi.color)
+            err_data[ err_i+1 ]         = diff * (7.0/16.0)
+            err_data[ err_i+(err_w-1) ] = diff * (3.0/16.0)
+            err_data[ err_i+err_w ]     = diff * (5.0/16.0)
+            err_data[ err_i+(err_w+1) ] = diff * (1.0/16.0)
+            dest_data[ src_i ] = ansi->Int32
+            ++src_i
+            ++err_i
+          endLoop
+          src_i += (src_w - 1)
+          err_i += (err_w - 1)
+
+          # Right to Left
+          loop width
+            local original = RGB( src_data[src_i] )
+            local ansi  = (original + err_data[err_i])->ANSIColor
+            local diff = original - RGB(ansi.color)
+            err_data[ err_i-1 ]         = diff * (7.0/16.0)
+            err_data[ err_i+(err_w+1) ] = diff * (3.0/16.0)
+            err_data[ err_i+err_w ]     = diff * (5.0/16.0)
+            err_data[ err_i+(err_w-1) ] = diff * (1.0/16.0)
+            dest_data[ src_i ] = ansi->Int32
+            --src_i
+            --err_i
+          endLoop
+          src_i += src_w + 1
+          err_i += err_w + 1
+        endLoop
+
+      else
+        local lookup = ANSIColorLookup.data
+        native @|RogueInt32* src = $source->pixels->data->as_int32s - 1;
+                |RogueByte* dest = $pixels->data->as_bytes - 1;
+                |RogueByte* lookup = $lookup->as_bytes;
+                |
+                |for (int i=$width*$height; --i>=0; )
+                |{
+                |  *(++dest) = lookup[ *(++src) & 0xFFffFF ];
+                |}
+      endIf
 
     method to->TextCanvas
       local canvas = TextCanvas( width, (height+1)/2 )
