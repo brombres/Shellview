@@ -34,8 +34,9 @@ class ShellView
         System.exit 0
       endIf
 
-      #ShellViewUI.bitmap_view.set_bitmap( Bitmap(File("~/Desktop/U5Tiles.png")) )
-      ShellViewUI.bitmap_view.set_bitmap( Bitmap(File("~/Desktop/DoctorPsycho.png")) )
+      ShellViewUI.bitmap_view.set_bitmap( Bitmap(File("~/Desktop/U5Tiles.png")) )
+      #ShellViewUI.bitmap_view.set_bitmap( Bitmap(File("~/Desktop/DoctorPsycho.png")) )
+      #ShellViewUI.bitmap_view.set_bitmap( Bitmap(File("~/Desktop/Source.jpeg")) )
       ShellViewUI.run
 
       #local bmp = ANSIBitmap( Bitmap(File("~/Desktop/U5.bmp")) )

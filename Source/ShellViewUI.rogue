@@ -4,13 +4,11 @@ uses Utility/TextCanvas
 class ShellViewUI : ConsoleUI [singleton]
   PROPERTIES
     bitmap_view : BitmapView
-    scroll_view : UIScrollView
 
   METHODS
     method init
       prior.init
       bitmap_view = BitmapView()
-      scroll_view = UIScrollView( bitmap_view )
-      add( scroll_view )
+      add( bitmap_view )
 
 endClass

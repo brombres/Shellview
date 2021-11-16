@@ -8,50 +8,125 @@ class BitmapView : UIComponent
     text_bitmap   : TextCanvas
     min_scale     : Real64
     max_scale     : Real64
-    bitmap_size   : XY
-    origin        = Anchor.CENTER : Anchor
+    image_pos     : XY
+    image_size    : XY
+    pointer_pos   : XY?
     zoom          = 0.0
+    image_needs_update = false
+    drag_origin   : XY?
+    is_dragging   = false
 
   METHODS
     method init
       expand_to_fill
 
     method set_bitmap( @bitmap )
-      update_text_bitmap
+      image_needs_update = true
+      request_redraw
 
     method on( e:KeyEvent )
       if (e.is_press(Keycode.Q)) System.exit
 
+    method on( e:PointerEvent )
+      pointer_pos = e.position - display_position
+      if (e.is_press)
+        drag_origin = e.position
+        is_dragging = false
+      elseIf (e.is_release)
+        if (not is_dragging)
+          if (e.is_release(0))     zoom_in
+          elseIf (e.is_release(1)) zoom_out
+        endIf
+        drag_origin = null
+      elseIf (e.is_move)
+        if (drag_origin)
+          is_dragging = true
+          image_pos += e.delta
+          image_needs_update = true
+          request_redraw
+        endIf
+      endIf
+
     method on( e:ScrollEvent )
       zoom = (zoom + -e.delta.y*0.01).clamped(0,1)
-      update_text_bitmap
-      #{
-      if (e.is_press(0))
-        ConsoleUICanvas.clear( StyledCharacter(' ',CharacterStyle.BG_BLUE) )
-      elseIf (e.is_press(1))
-        ConsoleUICanvas.clear( StyledCharacter(' ',CharacterStyle.BG_RED) )
+      image_needs_update = true
+      request_redraw
+
+    method update_image
+      image_needs_update = false
+      local bitmap_size = XY( bitmap.width, (bitmap.height+1)/2 )
+
+      local anchor    : XY
+      if (pointer_pos and text_bitmap)
+        anchor = (pointer_pos.value - image_pos ) / image_size
       endIf
-      }#
 
-    method after_update_layout
-      update_text_bitmap
-
-    method update_text_bitmap
-      bitmap_size = XY( bitmap.width, (bitmap.height+1)/2 )
       min_scale = (size / bitmap_size).min.clamped_high(1)
       max_scale = 1.0
       local scale = zoom.lerp(min_scale,max_scale)
       local new_size = (bitmap.size * scale).floor
-      if (not text_bitmap or text_bitmap.width != new_size.x or text_bitmap.height != new_size.y)
+      if (not text_bitmap or text_bitmap.size != new_size)
         text_bitmap  = ANSIBitmap( bitmap.resized(new_size) )->TextCanvas
       endIf
+      image_size = XY( new_size.x, new_size.y/2 ).floor
+
+      if (pointer_pos)
+        image_pos = (pointer_pos.value - (anchor * image_size)).floor
+      else
+        image_pos = ((size - image_size)/2).floor
+      endIf
+
+      local x = image_pos.x
+      local y = image_pos.y
+      if (image_size.x <= size.x)
+        x = ((size.x - image_size.x)/2).floor
+      else
+        if (x > 0)
+          x = 0
+        elseIf (x + image_size.x < size.x)
+          x = size.x - image_size.x
+        endIf
+      endIf
+      if (image_size.y <= size.y)
+        y = ((size.y - image_size.y)/2).floor
+      else
+        if (y > 0)
+          y = 0
+        elseIf (y + image_size.y < size.y)
+          y = size.y - image_size.y
+        endIf
+      endIf
+      image_pos = XY(x,y)
 
     method on_draw
+      if (image_needs_update) update_image
       if (size.min == 0 or not text_bitmap) return
 
       ConsoleUICanvas.fill( display_bounds, ' ' )
-      local bitmap_bounds = Box(0,0,text_bitmap.size).positioned_within( bounds, origin ).floor
-      ConsoleUICanvas.draw( text_bitmap, bitmap_bounds.position )
+      ConsoleUICanvas.draw( text_bitmap, image_pos )
 
+    method zoom_in
+      if (min_scale == 0 or max_scale == 0) return
+
+      local cur_scale = zoom.lerp( min_scale, max_scale )
+      local new_scale = max_scale
+
+      while (new_scale / 2 > cur_scale) new_scale /= 2
+      zoom = ((new_scale - min_scale) / (max_scale - min_scale)).clamped(0,1)
+
+      image_needs_update = true
+      request_redraw
+
+    method zoom_out
+      if (min_scale == 0 or max_scale == 0) return
+
+      local cur_scale = zoom.lerp( min_scale, max_scale )
+      local new_scale = max_scale
+
+      while (new_scale >= cur_scale) new_scale /= 2
+      zoom = ((new_scale - min_scale) / (max_scale - min_scale)).clamped(0,1)
+
+      image_needs_update = true
+      request_redraw
 endClass
 
