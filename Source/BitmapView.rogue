@@ -21,11 +21,28 @@ class BitmapView : UIComponent
       expand_to_fill
 
     method set_bitmap( @bitmap )
-      image_needs_update = true
-      request_redraw
+      request_image_update
 
     method on( e:KeyEvent )
-      if (e.is_press(Keycode.Q)) System.exit
+      if (e.is_press(Keycode.Q) or e.is_press(Keycode.ESCAPE)) System.exit
+
+      if (e.is_press(Keycode.LEFT_ARROW) or e.is_press(Keycode.H) or e.is_press(Keycode.A))
+        image_pos += XY( size.x/4, 0 )
+        request_image_update
+      elseIf (e.is_press(Keycode.RIGHT_ARROW) or e.is_press(Keycode.L) or e.is_press(Keycode.D))
+        image_pos -= XY( size.x/4, 0 )
+        request_image_update
+      elseIf (e.is_press(Keycode.DOWN_ARROW) or e.is_press(Keycode.J) or e.is_press(Keycode.S))
+        image_pos -= XY( 0, size.y/4 )
+        request_image_update
+      elseIf (e.is_press(Keycode.UP_ARROW) or e.is_press(Keycode.K) or e.is_press(Keycode.W))
+        image_pos += XY( 0, size.y/4 )
+        request_image_update
+      elseIf (e.is_press(Keycode.I) or e.is_press(Keycode.EQUALS))
+        zoom_in
+      elseIf (e.is_press(Keycode.O) or e.is_press(Keycode.MINUS))
+        zoom_out
+      endIf
 
     method on( e:PointerEvent )
       pointer_pos = e.position - display_position
@@ -42,13 +59,15 @@ class BitmapView : UIComponent
         if (drag_origin)
           is_dragging = true
           image_pos += e.delta
-          image_needs_update = true
-          request_redraw
+          request_image_update
         endIf
       endIf
 
     method on( e:ScrollEvent )
       zoom = (zoom + -e.delta.y*0.01).clamped(0,1)
+      request_image_update
+
+    method request_image_update
       image_needs_update = true
       request_redraw
 
@@ -114,8 +133,7 @@ class BitmapView : UIComponent
       while (new_scale / 2 > cur_scale) new_scale /= 2
       zoom = ((new_scale - min_scale) / (max_scale - min_scale)).clamped(0,1)
 
-      image_needs_update = true
-      request_redraw
+      request_image_update
 
     method zoom_out
       if (min_scale == 0 or max_scale == 0) return
@@ -126,7 +144,6 @@ class BitmapView : UIComponent
       while (new_scale >= cur_scale) new_scale /= 2
       zoom = ((new_scale - min_scale) / (max_scale - min_scale)).clamped(0,1)
 
-      image_needs_update = true
-      request_redraw
+      request_image_update
 endClass
 
