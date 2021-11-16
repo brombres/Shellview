@@ -8,22 +8,23 @@ class BitmapView : UIComponent
     text_bitmap   : TextCanvas
     min_scale     : Real64
     max_scale     : Real64
-    scale         : Real64
     bitmap_size   : XY
     origin        = Anchor.CENTER : Anchor
+    zoom          = 0.0
 
   METHODS
     method init
       expand_to_fill
 
     method set_bitmap( @bitmap )
-      request_layout
+      update_text_bitmap
 
     method on( e:KeyEvent )
       if (e.is_press(Keycode.Q)) System.exit
 
-    method on( e:PointerEvent )
-      request_redraw
+    method on( e:ScrollEvent )
+      zoom = (zoom + -e.delta.y*0.01).clamped(0,1)
+      update_text_bitmap
       #{
       if (e.is_press(0))
         ConsoleUICanvas.clear( StyledCharacter(' ',CharacterStyle.BG_BLUE) )
@@ -33,11 +34,14 @@ class BitmapView : UIComponent
       }#
 
     method after_update_layout
+      update_text_bitmap
+
+    method update_text_bitmap
       bitmap_size = XY( bitmap.width, (bitmap.height+1)/2 )
       min_scale = (size / bitmap_size).min.clamped_high(1)
       max_scale = 1.0
-      if (scale) scale .= clamped(min_scale,max_scale)
-      local new_size = (bitmap.size * which{ scale || min_scale }).floor
+      local scale = zoom.lerp(min_scale,max_scale)
+      local new_size = (bitmap.size * scale).floor
       if (not text_bitmap or text_bitmap.width != new_size.x or text_bitmap.height != new_size.y)
         text_bitmap  = ANSIBitmap( bitmap.resized(new_size) )->TextCanvas
       endIf

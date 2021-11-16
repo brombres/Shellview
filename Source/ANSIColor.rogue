@@ -59,22 +59,4 @@ class ANSIColorLookup : Byte[] [singleton]
               |    }
               |  }
               |}
-
-      #{
-      forEach (r in 0..255)
-        forEach (g in 0..255)
-          forEach (b in 0..255)
-            local best = Best<<Int32,Int32>>( (a,b)=>(a < b) )
-            forEach (i in 0..15)
-              local candidate = ANSIColor(i).color
-              local r_delta = r - ((candidate :>>>: 16) & 255)
-              local g_delta = g - ((candidate :>>>: 8) & 255)
-              local b_delta = b - (candidate & 255)
-              best.consider( i, r_delta*r_delta + g_delta*g_delta + b_delta*b_delta )
-            endForEach
-            add( best.value )
-          endForEach
-        endForEach
-      endForEach
-      }#
 endClass
