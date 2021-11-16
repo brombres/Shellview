@@ -33,11 +33,19 @@ class ImageView : UIComponent
       if (e.is_press(Keycode.Q) or e.is_press(Keycode.ESCAPE)) System.exit
 
       if (e.is_press(Keycode.LEFT_ARROW) or e.is_press(Keycode.H) or e.is_press(Keycode.A))
-        image_pos += XY( size.x/4, 0 )
-        request_image_update
+        if (zoom == 0)
+          previous_image
+        else
+          image_pos += XY( size.x/4, 0 )
+          request_image_update
+        endIf
       elseIf (e.is_press(Keycode.RIGHT_ARROW) or e.is_press(Keycode.L) or e.is_press(Keycode.D))
-        image_pos -= XY( size.x/4, 0 )
-        request_image_update
+        if (zoom == 0)
+          next_image
+        else
+          image_pos -= XY( size.x/4, 0 )
+          request_image_update
+        endIf
       elseIf (e.is_press(Keycode.DOWN_ARROW) or e.is_press(Keycode.J) or e.is_press(Keycode.S))
         image_pos -= XY( 0, size.y/4 )
         request_image_update
@@ -49,12 +57,18 @@ class ImageView : UIComponent
       elseIf (e.is_press(Keycode.O) or e.is_press(Keycode.MINUS))
         zoom_out
       elseIf (e.is_press(Keycode.N))
-        ShellViewUI.filepaths.add( ShellViewUI.filepaths.remove_first )
-        set_image( ShellViewUI.filepaths.last )
+        next_image
       elseIf (e.is_press(Keycode.B))
-        ShellViewUI.filepaths.insert( ShellViewUI.filepaths.remove_last )
-        set_image( ShellViewUI.filepaths.last )
+        previous_image
       endIf
+
+    method next_image
+      ShellViewUI.filepaths.add( ShellViewUI.filepaths.remove_first )
+      set_image( ShellViewUI.filepaths.last )
+
+    method previous_image
+      ShellViewUI.filepaths.insert( ShellViewUI.filepaths.remove_last )
+      set_image( ShellViewUI.filepaths.last )
 
     method on( e:PointerEvent )
       pointer_pos = e.position - display_position
