@@ -22,7 +22,7 @@ augment Build
     PROJECT           = "ShellView"
     LAUNCHER_NAME     = PROJECT.to_lowercase : String
 
-    RELEASE_MODE      = false  # default; 'rogo debug' temporarily sets to false and rebuilds
+    RELEASE_MODE      = true  # default; 'rogo debug' temporarily sets to false and rebuilds
     LAUNCHER_FOLDER   = "/usr/local/bin"
     ROGUEC_FLAGS      = ""
     CPP_FLAGS_UNIX    = ""
@@ -179,6 +179,65 @@ routine execute( commands:String, error_message=null:String, &suppress_error )->
     endIf
   endForEach
   return true
+endRoutine
+
+routine rogo_incv( version:String )
+  if (not String.exists(version))
+    version = String(File("README.md")).extract_string(''*Version|$\n*'')
+    require version
+    local parts = version.split('.')
+    parts.last = (parts.last->Int32 + 1)->String
+    version = parts.join('.')
+  endIf
+
+  block file = File( "Source/ShellView.rogue" )
+    local og_content = file.load_as_string
+    local content = og_content
+
+    content = content.replacing_pattern(
+    ''define VERSION "$"'',
+    ''define VERSION "ShellView v$"''(version)
+    )
+
+    content = content.replacing_pattern(
+      ''define AUTHOR "$"'',
+      ''define AUTHOR "$"''(Date.today->String(&verbose) + " by Abe Pralle")
+    )
+
+    if (content != og_content) file.save( content )
+  endBlock
+
+  block file = File( "README.md" )
+    local og_content = String(file)
+    local builder = StringBuilder( og_content.count )
+    forEach (line in LineReader(og_content))
+      if (line.contains_pattern("Version|$(I)"))
+        builder.println( "$| $" (line.before_last('|'),version) )
+      elseIf (line.contains_pattern("Date|"))
+        local today = Date.today->String(&verbose)
+        builder.println( "$| $" (line.before_last('|'),today) )
+      else
+        builder.println( line )
+      endIf
+    endForEach
+    local content = builder->String
+    if (content != og_content) file.save( content )
+  endBlock
+
+endRoutine
+
+routine rogo_publish( version:String )
+  # For repo owner's use
+  if (not String.exists(version)) throw Error( "Expected version number after 'rogo publish'." )
+  rogo_incv( version )
+
+  rogo_build
+
+  execute( ''git commit -am "[v$] Release"''(version), &suppress_error )
+  execute "git push"
+  local cmd = ''gh release create v$ --title "ShellView v$"''(version,version)
+  execute cmd
+
 endRoutine
 
 #-------------------------------------------------------------------------------

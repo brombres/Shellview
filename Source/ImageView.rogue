@@ -21,13 +21,12 @@ class ImageView : UIComponent
     method init
       expand_to_fill
 
-    method set_image( new_filepath:String )
-      if (new_filepath == filepath) return
-      filepath = new_filepath
-      bitmap = Bitmap( File(filepath) )
-      zoom = 0
-      text_bitmap = null
+    method after_update_layout
       request_image_update
+
+    method next_image
+      ShellViewUI.filepaths.add( ShellViewUI.filepaths.remove_first )
+      set_image( ShellViewUI.filepaths.last )
 
     method on( e:KeyEvent )
       if (e.is_press(Keycode.Q) or e.is_press(Keycode.ESCAPE)) System.exit
@@ -60,15 +59,10 @@ class ImageView : UIComponent
         next_image
       elseIf (e.is_press(Keycode.B))
         previous_image
+      elseIf (e.is_press(Keycode.R))
+        ShellView.command//options//dither = not ShellView.command//options//dither->Logical
+        request_image_update
       endIf
-
-    method next_image
-      ShellViewUI.filepaths.add( ShellViewUI.filepaths.remove_first )
-      set_image( ShellViewUI.filepaths.last )
-
-    method previous_image
-      ShellViewUI.filepaths.insert( ShellViewUI.filepaths.remove_last )
-      set_image( ShellViewUI.filepaths.last )
 
     method on( e:PointerEvent )
       pointer_pos = e.position - display_position
@@ -93,9 +87,21 @@ class ImageView : UIComponent
       zoom = (zoom + -e.delta.y*0.01).clamped(0,1)
       request_image_update
 
+    method previous_image
+      ShellViewUI.filepaths.insert( ShellViewUI.filepaths.remove_last )
+      set_image( ShellViewUI.filepaths.last )
+
     method request_image_update
       image_needs_update = true
       request_redraw
+
+    method set_image( new_filepath:String )
+      if (new_filepath == filepath) return
+      filepath = new_filepath
+      bitmap = Bitmap( File(filepath) )
+      zoom = 0
+      text_bitmap = null
+      request_image_update
 
     method update_image
       image_needs_update = false

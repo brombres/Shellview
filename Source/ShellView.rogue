@@ -2,6 +2,8 @@
 # ShellView.rogue
 # November 14, 2021
 #================================================================================
+$define VERSION "ShellView v1.0"
+$define AUTHOR  "November 15, 2021 by Abe Pralle"
 
 $requireRogue "1.9.6"
 
@@ -63,6 +65,9 @@ class ShellView [singleton]
       return command
 
     method print_usage
+      println VERSION
+      println AUTHOR
+      println
       println @|USAGE
                |  shellview [OPTIONS] [image-filepaths...]
                |
@@ -70,11 +75,15 @@ class ShellView [singleton]
                |  I, O, LEFT/RIGHT CLICK, SCROLL WHEEL
                |    Zoom in or out.
                |
-               |  WASD, ARROWS
-               |    Scroll around image if zoomed in or cycle next/previous image if zoomed out.
+               |  WASD, ARROW KEYS, MOUSE DRAG
+               |    Scroll around image if zoomed in.
+               |    Cycle next/previous image if zoomed out (A/D, LEFT/RIGHT).
                |
                |  N, B
                |    Cycle to (N)ext image or (B)ack to previous image.
+               |
+               |  R
+               |    Toggle color dithe(R)ing.
                |
                |  Q, ESCAPE
                |    Quit ShellView.
