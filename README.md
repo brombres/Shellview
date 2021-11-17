@@ -1,13 +1,22 @@
 # ShellView
 
-About     | Current Release
+Summary   | Current Release
 ----------|-----------------------
 Version   | 1.0
 Date      | November 15, 2021
-Platforms | Windows, macOS, Linux (Ubuntu+)
+Platforms | macOS, Linux (Ubuntu+), Windows
 Author    | Abe Pralle
 
-ShellView is a console-based image viewer.
+# About
+ShellView is a console-based image viewer. It uses character block graphics and ANSI colors to display JPEGs, PNGs, and BMPs. Useful in environments without a graphical user interface or in order to take a quick look at images from the command prompt.
+
+# Demo
+![Media/Videos/ShellView-Demo.gif](GIF)
+
+# Reference Images
+Summary   | Current Release                              | Test
+----------|----------------------------------------------|----
+Version   | ![Media/Images/GauntletII.jpeg](Gauntlet II) | ![Media/Images/Minmei.jpeg](Minmei)
 
 # Installation
 
