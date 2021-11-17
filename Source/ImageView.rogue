@@ -101,7 +101,7 @@ class ImageView : UIComponent
       image_needs_update = false
       local bitmap_size = XY( bitmap.width, (bitmap.height+1)/2 )
 
-      local anchor    : XY
+      local anchor : XY
       if (pointer_pos and text_bitmap)
         anchor = (pointer_pos.value - image_pos ) / image_size
       endIf
@@ -147,8 +147,12 @@ class ImageView : UIComponent
       if (image_needs_update) update_image
       if (size.min == 0 or not text_bitmap) return
 
-      ConsoleUICanvas.fill( display_bounds, ' ' )
-      ConsoleUICanvas.draw( text_bitmap, image_pos )
+      if (ShellView.command//options//print)
+        text_bitmap.display
+      else
+        ConsoleUICanvas.fill( display_bounds, ' ' )
+        ConsoleUICanvas.draw( text_bitmap, image_pos )
+      endIf
 
     method zoom_in
       if (min_scale == 0 or max_scale == 0) return

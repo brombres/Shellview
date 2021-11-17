@@ -1,4 +1,5 @@
 uses UI/ConsoleUI
+uses Utility/Epilog
 uses Utility/TextCanvas
 
 class ShellViewUI : ConsoleUI [singleton]
@@ -12,4 +13,18 @@ class ShellViewUI : ConsoleUI [singleton]
       image_view = ImageView()
       add( image_view )
 
+    method display
+      draw( &print )
 endClass
+
+augment ConsoleUI
+  METHODS
+    method draw( print:Logical )
+      if (print)
+        prior.draw
+      else
+        prior.draw
+        ConsoleUICanvas.display( bounds.position )
+        Console.set_cursor( 0, bounds.y2 )
+      endIf
+endAugment

@@ -30,9 +30,6 @@ class ShellView [singleton]
     method init( args:String[] )
       command = parse_args( args )
 
-      #trace command
-      # has //options and possibly //args
-
       if (command//options//help or command//args.count == 0)
         print_usage
         System.exit 0
@@ -42,25 +39,45 @@ class ShellView [singleton]
       ShellViewUI.filepaths.add( ShellViewUI.filepaths.remove_first )
       ShellViewUI.image_view.set_image( ShellViewUI.filepaths.last )
 
-      ShellViewUI.run
-
-      #local bmp = ANSIBitmap( Bitmap(File("~/Desktop/U5.bmp")) )
-      #trace bmp.width, bmp.height
-      #bmp.display
-
+      if (command//options//print)
+        loop (ShellViewUI.filepaths.count)
+          ShellViewUI.update( Console.bounds )
+          ShellViewUI.display
+          ConsoleStyle.reset
+          Console.clear_to_eol
+          println
+          ShellViewUI.image_view.next_image
+        endLoop
+      else
+        ShellViewUI.run
+      endIf
 
     method parse_args( args:String[] )->Value
       local command = CommandLineParser().
       [
-        option( "--dither",   &alias="-d" )
-        option( "--help",     &aliases=["-h","-?"] )
-        option( "--setting=", &alias="-s" )
+        option( "--dither",    &alias="-d" )
+        option( "--help",      &aliases=["-h","-?"] )
+        option( "--print",     &alias="-p" )
       ].parse( args )
+
       return command
 
     method print_usage
       println @|USAGE
-               |  shellview [OPTIONS]
+               |  shellview [OPTIONS] [image-filepaths...]
+               |
+               |COMMANDS (INTERACTIVE MODE)
+               |  I, O, LEFT/RIGHT CLICK, SCROLL WHEEL
+               |    Zoom in or out.
+               |
+               |  WASD, ARROWS
+               |    Scroll around image if zoomed in or cycle next/previous image if zoomed out.
+               |
+               |  N, B
+               |    Cycle to (N)ext image or (B)ack to previous image.
+               |
+               |  Q, ESCAPE
+               |    Quit ShellView.
                |
                |OPTIONS
                |  --dither, -d
@@ -68,4 +85,8 @@ class ShellView [singleton]
                |
                |  --help, -h, -?
                |    Show this help text.
+               |
+               |  --print, -p
+               |    Print all images to the console (scaled to fit) without entering interactive mode.
 endClass
+

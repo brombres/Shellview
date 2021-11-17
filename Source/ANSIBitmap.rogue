@@ -31,7 +31,8 @@ class ANSIBitmap
         local err_data  = error.data
         local err_i     = 1
         local err_w     = width + 2
-        loop height/2  # assumes even number of lines
+
+        forEach (j in 0..<height step 2)
           # Left to Right
           loop width
             local original = RGB( src_data[src_i] )
@@ -47,6 +48,7 @@ class ANSIBitmap
           endLoop
           src_i += (src_w - 1)
           err_i += (err_w - 1)
+          if (j+1 == height) escapeForEach
 
           # Right to Left
           loop width
@@ -63,7 +65,7 @@ class ANSIBitmap
           endLoop
           src_i += src_w + 1
           err_i += err_w + 1
-        endLoop
+        endForEach
 
       else
         local lookup = ANSIColorLookup.data

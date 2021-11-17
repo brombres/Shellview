@@ -1,6 +1,6 @@
 uses Utility/Best
 
-enum ANSIColor( color:Int32, fg:Int32, bg:Int32 ) [api]
+enum ANSIColor( color:Int32, fg:Int32, bg:Int32 )
   NONE        ( 0x00000000, 39, 49 )
 
   BLACK       ( 0xFF000000, 30, 40 )
@@ -29,7 +29,7 @@ class ANSIColorLookup : Byte[] [singleton]
       count = 256*256*256
 
       local target_colors = Int32[]
-      target_colors.add( ANSIColor(forEach in 0..16).color )
+      target_colors.add( (forEach in ANSIColor.categories).color )
 
       native @|RogueInt32* target_colors = $target_colors->data->as_int32s;
               |RogueByte*  mapping = $this->data->as_bytes - 1;
@@ -42,7 +42,7 @@ class ANSIColorLookup : Byte[] [singleton]
               |    {
               |      RogueInt32 best_i = -1;
               |      RogueInt32 best_score = 0;
-              |      for (RogueInt32 i=16; --i>=0; )
+              |      for (RogueInt32 i=16; --i>=1; )
               |      {
               |        RogueInt32 color = target_colors[i];
               |        RogueInt32 dr = r - ((color >> 16) & 255);
