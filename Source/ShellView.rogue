@@ -37,20 +37,26 @@ class ShellView [singleton]
         System.exit 0
       endIf
 
-      ShellViewUI.filepaths = command//args.to_list<<String>>
-      ShellViewUI.filepaths.add( ShellViewUI.filepaths.remove_first )
-      ShellViewUI.image_view.set_image( ShellViewUI.filepaths.last )
+      # Process wildcards in filepaths (especially Windows)
+      forEach (filepath in command//args.to_list<<String>>)
+        if (filepath.contains('*') or filepath.contains('?') or File.is_folder(filepath))
+          ShellViewUI.filepaths.add( File.listing(filepath) )
+        else
+          ShellViewUI.filepaths.add( filepath )
+        endIf
+      endForEach
 
       if (command//options//print)
         loop (ShellViewUI.filepaths.count)
+          ShellViewUI.image_view.next_image
           ShellViewUI.update( Console.bounds )
           ShellViewUI.display
           ConsoleStyle.reset
           Console.clear_to_eol
           println
-          ShellViewUI.image_view.next_image
         endLoop
       else
+        ShellViewUI.image_view.next_image
         ShellViewUI.run
       endIf
 

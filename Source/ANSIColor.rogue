@@ -42,7 +42,7 @@ class ANSIColorLookup : Byte[] [singleton]
               |    {
               |      RogueInt32 best_i = -1;
               |      RogueInt32 best_score = 0;
-              |      for (RogueInt32 i=16; --i>=1; )
+              |      for (RogueInt32 i=17; --i>=1; )
               |      {
               |        RogueInt32 color = target_colors[i];
               |        RogueInt32 dr = r - ((color >> 16) & 255);

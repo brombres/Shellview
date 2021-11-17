@@ -5,7 +5,7 @@ uses Utility/TextCanvas
 class ShellViewUI : ConsoleUI [singleton]
   PROPERTIES
     image_view : ImageView
-    filepaths  : String[]
+    filepaths  = String[]
 
   METHODS
     method init

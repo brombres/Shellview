@@ -32,24 +32,24 @@ class ImageView : UIComponent
       if (e.is_press(Keycode.Q) or e.is_press(Keycode.ESCAPE)) System.exit
 
       if (e.is_press(Keycode.LEFT_ARROW) or e.is_press(Keycode.H) or e.is_press(Keycode.A))
-        if (zoom == 0)
+        if (zoom == 0 or min_scale == max_scale)
           previous_image
         else
-          image_pos += XY( size.x/4, 0 )
+          image_pos += XY( size.x/3, 0 )
           request_image_update
         endIf
       elseIf (e.is_press(Keycode.RIGHT_ARROW) or e.is_press(Keycode.L) or e.is_press(Keycode.D))
-        if (zoom == 0)
+        if (zoom == 0 or min_scale == max_scale)
           next_image
         else
-          image_pos -= XY( size.x/4, 0 )
+          image_pos -= XY( size.x/3, 0 )
           request_image_update
         endIf
       elseIf (e.is_press(Keycode.DOWN_ARROW) or e.is_press(Keycode.J) or e.is_press(Keycode.S))
-        image_pos -= XY( 0, size.y/4 )
+        image_pos -= XY( 0, size.y/3 )
         request_image_update
       elseIf (e.is_press(Keycode.UP_ARROW) or e.is_press(Keycode.K) or e.is_press(Keycode.W))
-        image_pos += XY( 0, size.y/4 )
+        image_pos += XY( 0, size.y/3 )
         request_image_update
       elseIf (e.is_press(Keycode.I) or e.is_press(Keycode.EQUALS))
         zoom_in
@@ -84,7 +84,8 @@ class ImageView : UIComponent
       endIf
 
     method on( e:ScrollEvent )
-      zoom = (zoom + -e.delta.y*0.01).clamped(0,1)
+      local scale = which{ System.is_windows:0.05 || 0.01 }
+      zoom = (zoom + -e.delta.y*scale).clamped(0,1)
       request_image_update
 
     method previous_image
@@ -162,6 +163,7 @@ class ImageView : UIComponent
 
     method zoom_in
       if (min_scale == 0 or max_scale == 0) return
+      if (min_scale == max_scale) zoom = min_scale; return
 
       local cur_scale = zoom.lerp( min_scale, max_scale )
       local new_scale = max_scale
@@ -173,6 +175,7 @@ class ImageView : UIComponent
 
     method zoom_out
       if (min_scale == 0 or max_scale == 0) return
+      if (min_scale == max_scale) zoom = min_scale; return
 
       local cur_scale = zoom.lerp( min_scale, max_scale )
       local new_scale = max_scale

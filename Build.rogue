@@ -21,8 +21,8 @@ augment Build
   PROPERTIES
     PROJECT           = "ShellView"
     LAUNCHER_NAME     = PROJECT.to_lowercase : String
-
     RELEASE_MODE      = true  # default; 'rogo debug' temporarily sets to false and rebuilds
+
     LAUNCHER_FOLDER   = "/usr/local/bin"
     ROGUEC_FLAGS      = ""
     CPP_FLAGS_UNIX    = ""
