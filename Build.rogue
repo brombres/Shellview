@@ -85,13 +85,15 @@ routine compile_cpp
   local cpp_filepath = File.esc( "Build/$-$.cpp" (Build.PROJECT,System.os) )
   local exe_filepath = File.esc( exe_filepath )
   if (System.is_windows)
-    local libs = ""
+    local libs = "Libraries/Windows/jpeg/libjpeg.lib"
+    libs += " Libraries/Windows/lpng/libpng16.lib"
+    libs += " Libraries/Windows/lpng/zlib.lib"
     local flags = Build.CPP_FLAGS_WINDOWS
     if (flags != "") flags += " "
     flags += which{ Build.RELEASE_MODE:"/Ob2ity /GF /Gy" || "/Od" }
     local obj_filepath = File.esc( "Build/$-Windows.obj"(Build.PROJECT) )
     local cc = "cl $ /EHsc /nologo $ /Fo$ /Fe$ $" (flags,cpp_filepath,obj_filepath,exe_filepath,libs)
-    #cc += " /link /LTCG"   # uncomment this if there are errors linking libraries
+    cc += " /link /LTCG"
     execute cc
   else
     local libs = which{ System.is_linux:" $LIBRARY_FLAGS(libpng-dev,libjpeg-dev)" || " $LIBRARY_FLAGS(libpng,libjpeg,zlib)" }
