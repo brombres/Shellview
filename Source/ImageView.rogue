@@ -88,7 +88,7 @@ class ImageView : UIComponent
       endIf
 
     method on( e:ScrollEvent )
-      local scale = which{ System.is_windows:0.05 || 0.01 }
+      local scale = which{ System.is_macos:0.01 || 0.05 }
       zoom = (zoom + -e.delta.y*scale).clamped(0,1)
       request_image_update
 
