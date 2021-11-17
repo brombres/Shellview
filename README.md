@@ -11,12 +11,12 @@ Author    | Abe Pralle
 ShellView is a console-based image viewer. It uses character block graphics and ANSI colors to display JPEGs, PNGs, and BMPs. Useful in environments without a graphical user interface or in order to take a quick look at images from the command prompt.
 
 # Demo
-![Media/Videos/ShellView-Demo.gif](GIF)
+![Demo](Media/Videos/ShellView-Demo.gif)
 
 # Reference Images
 Summary   | Current Release                              | Test
 ----------|----------------------------------------------|----
-Version   | ![Media/Images/GauntletII.jpeg](Gauntlet II) | ![Media/Images/Minmei.jpeg](Minmei)
+Version   | ![Gauntlet II](Media/Images/GauntletII.jpeg) | ![Minmei](Media/Images/Minmei.jpeg)
 
 # Installation
 
