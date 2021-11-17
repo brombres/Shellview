@@ -16,7 +16,7 @@ ShellView is a console-based image viewer. It uses character block graphics and 
 # Reference Images
 Gauntlet II | Minmei                                       | Sunflowers
 ------------|----------------------------------------------|-----------
-![Gauntlet II](Media/Images/GauntletII.jpeg) | ![Minmei](Media/Images/Minmei.jpeg) | ![Sunflowers](Media/Images/Sunflowers.jpeg)
+![Gauntlet II](Media/Thumbnails/GauntletII.jpeg) | ![Minmei](Media/Thumbnails/Minmei.jpeg) | ![Sunflowers](Media/Thumbnails/Sunflowers.jpeg)
 
 # Installation
 
