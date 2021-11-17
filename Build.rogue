@@ -26,7 +26,7 @@ augment Build
     LAUNCHER_FOLDER   = "/usr/local/bin"
     ROGUEC_FLAGS      = ""
     CPP_FLAGS_UNIX    = ""
-    CPP_FLAGS_WINDOWS = ""
+    CPP_FLAGS_WINDOWS = '/ILibraries/Windows/lpng /ILibraries/Windows/jpeg'
 endAugment
 
 routine rogo_default
