@@ -21,11 +21,11 @@ Gauntlet II | Minmei                                       | Sunflowers
 # Installation
 
 ## Morlock Install (Recommended)
-1. Install [https://morlock.sh](morlock.sh)
+1. Install [morlock.sh](https://morlock.sh)
 2. `morlock install abepralle/shellview`
 
 ## Manual Install
-1. Install [https://github.com/AbePralle/Rogue](Rogue) and [https://github.com/AbePralle/Rogo](Rogo).
+1. Install [Rogue](https://github.com/AbePralle/Rogue) and [Rogo](https://github.com/AbePralle/Rogo).
 2. Clone this repo and run `rogo install`.
 
 # Usage
