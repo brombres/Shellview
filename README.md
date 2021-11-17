@@ -27,12 +27,13 @@ ShellView is a console-based image viewer.
       I, O, LEFT/RIGHT CLICK, SCROLL WHEEL
         Zoom in or out.
 
-      WASD, ARROW KEYS
+      WASD, HJKL, ARROW KEYS, MOUSE DRAG
         Scroll around image if zoomed in.
-        Cycle next/previous image if zoomed out (A/D, LEFT/RIGHT).
+        Cycle next/previous image if zoomed out (A/D, H/L, LEFT/RIGHT).
 
-      N, B
+      N, B or C, Z
         Cycle to (N)ext image or (B)ack to previous image.
+        Alternately, (C)ontinue to next or (Z)=back.
 
       R
         Toggle color dithe(R)ing.
@@ -42,7 +43,7 @@ ShellView is a console-based image viewer.
 
     OPTIONS
       --dither, -d
-        Enable color dithering.
+        Start with color dithering turned on (toggle with R).
 
       --help, -h, -?
         Show this help text.

@@ -1,5 +1,6 @@
 uses Bitmap
 uses UI/ConsoleUI
+uses Utility/Epilog
 uses Utility/TextCanvas
 
 class ImageView : UIComponent
@@ -13,9 +14,11 @@ class ImageView : UIComponent
     image_size    : XY
     pointer_pos   : XY?
     zoom          = 0.0
-    image_needs_update = false
     drag_origin   : XY?
     is_dragging   = false
+    image_needs_update = false
+    regenerate_image   = false
+    should_set_image_pos = true
 
   METHODS
     method init
@@ -55,12 +58,13 @@ class ImageView : UIComponent
         zoom_in
       elseIf (e.is_press(Keycode.O) or e.is_press(Keycode.MINUS))
         zoom_out
-      elseIf (e.is_press(Keycode.N))
+      elseIf (e.is_press(Keycode.N) or e.is_press(Keycode.C))
         next_image
-      elseIf (e.is_press(Keycode.B))
+      elseIf (e.is_press(Keycode.B) or e.is_press(Keycode.Z))
         previous_image
       elseIf (e.is_press(Keycode.R))
         ShellView.command//options//dither = not ShellView.command//options//dither->Logical
+        regenerate_image = true
         request_image_update
       endIf
 
@@ -102,6 +106,7 @@ class ImageView : UIComponent
       bitmap = Bitmap( File(filepath) )
       zoom = 0
       text_bitmap = null
+      should_set_image_pos = true
       request_image_update
 
     method update_image
@@ -111,21 +116,29 @@ class ImageView : UIComponent
       local anchor : XY
       if (pointer_pos and text_bitmap)
         anchor = (pointer_pos.value - image_pos ) / image_size
+      else
+        anchor = (size/2 - image_pos ) / image_size
       endIf
 
       min_scale = (size / bitmap_size).min.clamped_high(1)
       max_scale = 1.0
       local scale = zoom.lerp(min_scale,max_scale)
       local new_size = (bitmap.size * scale).floor
-      if (not text_bitmap or text_bitmap.size != new_size)
+      local is_resizing = (not text_bitmap or text_bitmap.size != (new_size*XY(1,0.5)).floor)
+      if (is_resizing or regenerate_image)
+        regenerate_image = false
         text_bitmap  = ANSIBitmap( bitmap.resized(new_size) )->TextCanvas
+        image_size = XY( new_size.x, new_size.y/2 ).floor
+        if (should_set_image_pos)
+          should_set_image_pos = false
+          image_pos = ((size - image_size)/2).floor
+        endIf
       endIf
-      image_size = XY( new_size.x, new_size.y/2 ).floor
 
       if (pointer_pos)
         image_pos = (pointer_pos.value - (anchor * image_size)).floor
-      else
-        image_pos = ((size - image_size)/2).floor
+      elseIf (is_resizing)
+        image_pos = (size/2 - (anchor * image_size)).floor
       endIf
 
       local x = image_pos.x
