@@ -19,5 +19,10 @@ class RGB( red:Real64, green:Real64, blue:Real64 ) [compound]
       return RGB( red*value, green*value, blue*value )
 
     method to->ANSIColor
-      return ANSIColor( ANSIColorLookup[Color(red,green,blue).argb & 0xFFffFF] )
+      local r = Int32( red*255 ).clamped( 0, 255 )
+      local g = Int32( green*255 ).clamped( 0, 255 )
+      local b = Int32( blue*255 ).clamped( 0, 255 )
+      return ANSIColor(
+        ANSIColorLookup[ ((r & 0xF0):<<:4) | (g & 0xF0) | ((b & 0xF0):>>>:4) ]
+      )
 endClass

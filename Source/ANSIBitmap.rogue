@@ -78,7 +78,8 @@ class ANSIBitmap
                 |
                 |for (int i=$width*$height; --i>=0; )
                 |{
-                |  *(++dest) = lookup[ *(++src) & 0xFFffFF ];
+                |  RogueInt32 argb = *(++src);
+                |  *(++dest) = lookup[ ((argb & 0xF00000)>>12) | ((argb & 0xF000)>>8) | ((argb & 0xF0)>>4) ];
                 |}
       endIf
 

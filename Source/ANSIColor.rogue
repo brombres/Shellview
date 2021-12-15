@@ -7,26 +7,27 @@ enum ANSIColor( color:Int32, fg:Int32, bg:Int32 )
   DARK_RED    ( 0xFF990000, 31, 41 )
   DARK_GREEN  ( 0xFF00A600, 32, 42 )
   DARK_YELLOW ( 0xFF999900, 33, 43 )
-  DARK_BLUE   ( 0xFF0000B0, 34, 44 )
-  DARK_PURPLE ( 0xFFB000B0, 35, 45 )
-  DARK_CYAN   ( 0xFF00A0B0, 36, 46 )
-  LIGHT_GRAY  ( 0xFFBBBBBB, 37, 47 )
+  DARK_BLUE   ( 0xFF729fcf, 34, 44 )
+  DARK_PURPLE ( 0xFFB200B2, 35, 45 )
+  DARK_CYAN   ( 0xFF00A6B2, 36, 46 )
+  LIGHT_GRAY  ( 0xFFBFBFBF, 37, 47 )
 
   DARK_GRAY   ( 0xFF666666, 90, 100 )
-  RED         ( 0xFFE60000, 91, 101 )
-  GREEN       ( 0xFF00DD00, 92, 102 )
-  YELLOW      ( 0xFFE6E600, 93, 103 )
-  BLUE        ( 0xFF0000FF, 94, 104 )
-  PURPLE      ( 0xFFE600E6, 95, 105 )
-  CYAN        ( 0xFF00E6E6, 96, 106 )
-  WHITE       ( 0xFFFFFFFF, 97, 107 )
+  RED         ( 0xFFE50000, 91, 101 )
+  GREEN       ( 0xFF00D900, 92, 102 )
+  YELLOW      ( 0xFFE5E500, 93, 103 )
+  BLUE        ( 0xFF0000ff, 94, 104 )
+  PURPLE      ( 0xFFE500E5, 95, 105 )
+  CYAN        ( 0xFF00E5E5, 96, 106 )
+  WHITE       ( 0xFFE5E5E5, 97, 107 )
+
 endEnum
 
 class ANSIColorLookup : Byte[] [singleton]
   METHODS
     method init
-      prior.init( 256*256*256 )
-      count = 256*256*256
+      prior.init( 16*16*16 )
+      count = 16*16*16
 
       local target_colors = Int32[]
       target_colors.add( (forEach in ANSIColor.categories).color )
@@ -34,20 +35,20 @@ class ANSIColorLookup : Byte[] [singleton]
       native @|RogueInt32* target_colors = $target_colors->data->as_int32s;
               |RogueByte*  mapping = $this->data->as_bytes - 1;
               |
-              |for (RogueInt32 r=-1; ++r<=255; )
+              |for (RogueInt32 r4=-1; ++r4<=15; )
               |{
-              |  for (RogueInt32 g=-1; ++g<=255; )
+              |  for (RogueInt32 g4=-1; ++g4<=15; )
               |  {
-              |    for (RogueInt32 b=-1; ++b<=255; )
+              |    for (RogueInt32 b4=-1; ++b4<=15; )
               |    {
               |      RogueInt32 best_i = -1;
               |      RogueInt32 best_score = 0;
               |      for (RogueInt32 i=17; --i>=1; )
               |      {
               |        RogueInt32 color = target_colors[i];
-              |        RogueInt32 dr = r - ((color >> 16) & 255);
-              |        RogueInt32 dg = g - ((color >> 8) & 255);
-              |        RogueInt32 db = b - (color & 255);
+              |        RogueInt32 dr = ((r4<<4)|r4) - ((color>>16)&255);
+              |        RogueInt32 dg = ((g4<<4)|g4) - ((color>>8)&255);
+              |        RogueInt32 db = ((b4<<4)|b4) - (color&255);
               |        RogueInt32 score = dr*dr + dg*dg + db*db;
               |        if (best_i == -1 || score < best_score)
               |        {
