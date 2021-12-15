@@ -1,27 +1,72 @@
+uses Bitmap
 uses Utility/Best
 
-enum ANSIColor( color:Int32, fg:Int32, bg:Int32 )
-  NONE        ( 0x00000000, 39, 49 )
+# 256 color RGB value info:
+# https://en.wikipedia.org/wiki/ANSI_escape_code#8-bit
+# https://stackoverflow.com/a/27165165/135791
 
-  BLACK       ( 0xFF000000, 30, 40 )
-  DARK_RED    ( 0xFF990000, 31, 41 )
-  DARK_GREEN  ( 0xFF00A600, 32, 42 )
-  DARK_YELLOW ( 0xFF999900, 33, 43 )
-  DARK_BLUE   ( 0xFF729fcf, 34, 44 )
-  DARK_PURPLE ( 0xFFB200B2, 35, 45 )
-  DARK_CYAN   ( 0xFF00A6B2, 36, 46 )
-  LIGHT_GRAY  ( 0xFFBFBFBF, 37, 47 )
+class ANSIColor( index:Int32, color:Color ) [compound]
+endClass
 
-  DARK_GRAY   ( 0xFF666666, 90, 100 )
-  RED         ( 0xFFE50000, 91, 101 )
-  GREEN       ( 0xFF00D900, 92, 102 )
-  YELLOW      ( 0xFFE5E500, 93, 103 )
-  BLUE        ( 0xFF0000ff, 94, 104 )
-  PURPLE      ( 0xFFE500E5, 95, 105 )
-  CYAN        ( 0xFF00E5E5, 96, 106 )
-  WHITE       ( 0xFFE5E5E5, 97, 107 )
+class ANSIColors : ANSIColor[] [singleton]
+  PROPERTIES
+    BLACK       = ANSIColor(  0, Color(0xFF000000) )
+    DARK_RED    = ANSIColor(  1, Color(0xFF990000) )
+    DARK_GREEN  = ANSIColor(  2, Color(0xFF00A600) )
+    DARK_YELLOW = ANSIColor(  3, Color(0xFF999900) )
+    DARK_BLUE   = ANSIColor(  4, Color(0xFF729fcf) )
+    DARK_PURPLE = ANSIColor(  5, Color(0xFFB200B2) )
+    DARK_CYAN   = ANSIColor(  6, Color(0xFF00A6B2) )
+    LIGHT_GRAY  = ANSIColor(  7, Color(0xFFBFBFBF) )
 
-endEnum
+    DARK_GRAY   = ANSIColor(  8, Color(0xFF666666) )
+    RED         = ANSIColor(  9, Color(0xFFE50000) )
+    GREEN       = ANSIColor( 10, Color(0xFF00D900) )
+    YELLOW      = ANSIColor( 11, Color(0xFFE5E500) )
+    BLUE        = ANSIColor( 12, Color(0xFF0000ff) )
+    PURPLE      = ANSIColor( 13, Color(0xFFE500E5) )
+    CYAN        = ANSIColor( 14, Color(0xFF00E5E5) )
+    WHITE       = ANSIColor( 15, Color(0xFFE5E5E5) )
+
+  METHODS
+    method init
+      prior.init( 256 )
+
+      add( BLACK )
+      add( DARK_RED )
+      add( DARK_GREEN )
+      add( DARK_YELLOW )
+      add( DARK_BLUE )
+      add( DARK_PURPLE )
+      add( DARK_CYAN )
+      add( LIGHT_GRAY )
+
+      add( DARK_GRAY )
+      add( RED )
+      add( GREEN )
+      add( YELLOW )
+      add( BLUE )
+      add( PURPLE )
+      add( CYAN )
+      add( WHITE )
+
+      # RGB colors 16..231
+      local intensities = [0, 95, 135, 175, 215, 255]
+      forEach (r in 0..5)
+        forEach (g in 0..5)
+          forEach (b in 0..5)
+            add( ANSIColor(count,Color(intensities[r],intensities[g],intensities[b])) )
+          endForEach
+        endForEach
+      endForEach
+
+      # Grayscale 232..255
+      forEach (n in 232..255)
+        local v = (n - 232) * 10 + 8
+        add( ANSIColor(count,Color(v,v,v)) )
+      endForEach
+endClass
+
 
 class ANSIColorLookup : Byte[] [singleton]
   METHODS
@@ -30,7 +75,8 @@ class ANSIColorLookup : Byte[] [singleton]
       count = 16*16*16
 
       local target_colors = Int32[]
-      target_colors.add( (forEach in ANSIColor.categories).color )
+      local color_count   = which{ System.is_windows:16 || 256 }
+      target_colors.add( ANSIColors[forEach in 0..<color_count].color.argb )
 
       native @|RogueInt32* target_colors = $target_colors->data->as_int32s;
               |RogueByte*  mapping = $this->data->as_bytes - 1;
@@ -43,7 +89,7 @@ class ANSIColorLookup : Byte[] [singleton]
               |    {
               |      RogueInt32 best_i = -1;
               |      RogueInt32 best_score = 0;
-              |      for (RogueInt32 i=17; --i>=1; )
+              |      for (RogueInt32 i=$color_count; --i>=0; )
               |      {
               |        RogueInt32 color = target_colors[i];
               |        RogueInt32 dr = ((r4<<4)|r4) - ((color>>16)&255);
@@ -61,3 +107,4 @@ class ANSIColorLookup : Byte[] [singleton]
               |  }
               |}
 endClass
+

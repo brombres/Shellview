@@ -19,7 +19,7 @@ class ANSIBitmap
       pixels = Byte[]( width*even_height )  # round up height to even # pixels
       pixels.count = width*height
 
-      loop (width * (height&1)) pixels.add(ANSIColor.BLACK->Int32)  # odd # pixels get black bottom
+      loop (width * (height&1)) pixels.add(ANSIColors.BLACK.index)  # odd # pixels get black bottom
 
       if (ShellView.command//options//dither)
         # Convert colors while applying Floyd-Steinberg dithering.
@@ -45,7 +45,7 @@ class ANSIBitmap
             err_data[ err_i+(err_w-1) ] = diff * (3.0/16.0)
             err_data[ err_i+err_w ]     = diff * (5.0/16.0)
             err_data[ err_i+(err_w+1) ] = diff * (1.0/16.0)
-            dest_data[ src_i ] = ansi->Int32
+            dest_data[ src_i ] = ansi.index
             ++src_i
             ++err_i
           endLoop
@@ -62,7 +62,7 @@ class ANSIBitmap
             err_data[ err_i+(err_w+1) ] = diff * (3.0/16.0)
             err_data[ err_i+err_w ]     = diff * (5.0/16.0)
             err_data[ err_i+(err_w-1) ] = diff * (1.0/16.0)
-            dest_data[ src_i ] = ansi->Int32
+            dest_data[ src_i ] = ansi.index
             --src_i
             --err_i
           endLoop
@@ -95,8 +95,8 @@ class ANSIBitmap
 
       forEach (j in 0..<even_height/2)
         forEach (i in 0..<width)
-          local bg = (pixels[src_index])       :<<: BG_SHIFT
-          local fg = (pixels[src_index+width]) :<<: FG_SHIFT
+          local bg = (Int32((pixels[src_index]))       + 1):<<: BG_SHIFT
+          local fg = (Int32((pixels[src_index+width])) + 1):<<: FG_SHIFT
           canvas_data[ dest_index ] = StyledCharacter( '\[2584]', bg | fg )
           ++src_index
           ++dest_index

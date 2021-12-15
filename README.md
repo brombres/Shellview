@@ -8,15 +8,15 @@ Platforms | macOS, Linux (Ubuntu+), Windows
 Author    | Abe Pralle
 
 # About
-ShellView is a console-based image viewer. It uses character block graphics and ANSI colors to display JPEGs, PNGs, and BMPs. Useful in environments without a graphical user interface or in order to take a quick look at images from the command prompt.
+ShellView is a console-based image viewer. It uses character block graphics and ANSI colors to display JPEGs, PNGs, and BMPs. Useful in environments without a graphical user interface or in order to take a quick look at images from the command prompt. macOS and Linux utilize 256 color mode; Windows uses 16 color mode.
 
 # Demo
-![Demo](Media/Videos/ShellView-Demo.gif)
+![Demo](Media/Videos/ShellView-1.2.gif)
 
 # Reference Images
-Gauntlet II | Minmei                                       | Sunflowers
-------------|----------------------------------------------|-----------
-![Gauntlet II](Media/Thumbnails/GauntletII.jpeg) | ![Minmei](Media/Thumbnails/Minmei.jpeg) | ![Sunflowers](Media/Thumbnails/Sunflowers.jpeg)
+Gauntlet II | Minmei                                       | Sunflowers | PETSCII Christmas
+------------|----------------------------------------------|------------|----------------------
+![Gauntlet II](Media/Thumbnails/GauntletII.jpeg) | ![Minmei](Media/Thumbnails/Minmei.jpeg) | ![Sunflowers](Media/Thumbnails/Sunflowers.jpeg) | ![PETSCII Christmas](Media/Thumbnails/Christmas.png)
 
 # Installation
 
