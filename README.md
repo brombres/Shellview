@@ -11,7 +11,7 @@ Author    | Abe Pralle
 ShellView is a console-based image viewer. It uses character block graphics and ANSI colors to display JPEGs, PNGs, and BMPs. Useful in environments without a graphical user interface or in order to take a quick look at images from the command prompt. macOS and Linux utilize 256 color mode; Windows uses 16 color mode.
 
 # Demo
-![Demo](Media/Videos/ShellView-1.2.gif)
+![Demo](Media/Videos/ShellView-1.1.gif)
 
 # Reference Images
 Gauntlet II | Minmei                                       | Sunflowers | PETSCII Christmas
