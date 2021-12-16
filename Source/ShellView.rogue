@@ -63,7 +63,9 @@ class ShellView [singleton]
     method parse_args( args:String[] )->Value
       local command = CommandLineParser().
       [
+        option( "--4-bit",     &alias="-4" )
         option( "--dither",    &alias="-d" )
+        option( "--grayscale", &alias="-g" )
         option( "--help",      &aliases=["-h","-?"] )
         option( "--print",     &alias="-p" )
       ].parse( args )
@@ -89,6 +91,9 @@ class ShellView [singleton]
                |    Cycle to (N)ext image or (B)ack to previous image.
                |    Alternately, (C)ontinue to next or (Z)=back.
                |
+               |  G
+               |    Toggle (G)rayscale mode.
+               |
                |  R
                |    Toggle color dithe(R)ing.
                |
@@ -96,8 +101,14 @@ class ShellView [singleton]
                |    Quit ShellView.
                |
                |OPTIONS
+               |  --4-bit, -4
+               |    Use 4-bit ANSI color (16 possible colors).
+               |
                |  --dither, -d
                |    Start with color dithering turned on (toggle with R).
+               |
+               |  --grayscale, -g
+               |    Start in grayscale mode (toggle with G).
                |
                |  --help, -h, -?
                |    Show this help text.

@@ -8,7 +8,7 @@ Platforms | macOS, Linux (Ubuntu+), Windows
 Author    | Abe Pralle
 
 # About
-ShellView is a console-based image viewer. It uses character block graphics and ANSI colors to display JPEGs, PNGs, and BMPs. Useful in environments without a graphical user interface or in order to take a quick look at images from the command prompt. macOS and Linux utilize 256 color mode; Windows uses 16 color mode.
+ShellView is a console-based image viewer with pan and zoom. It uses character block graphics and ANSI colors to display JPEGs, PNGs, and BMPs. macOS and Linux utilize 256 color mode; Windows uses 16 color mode.
 
 # Demo
 ![Demo](Media/Videos/ShellView-1.1.gif)
@@ -44,6 +44,9 @@ By Atari | From Robotech/Macross | | By [Worrior1](https://twitter.com/PETSCIIWO
         Cycle to (N)ext image or (B)ack to previous image.
         Alternately, (C)ontinue to next or (Z)=back.
 
+      G
+        Toggle (G)rayscale mode.
+
       R
         Toggle color dithe(R)ing.
 
@@ -51,8 +54,14 @@ By Atari | From Robotech/Macross | | By [Worrior1](https://twitter.com/PETSCIIWO
         Quit ShellView.
 
     OPTIONS
+      --4-bit, -4
+        Use 4-bit ANSI color (16 possible colors).
+
       --dither, -d
         Start with color dithering turned on (toggle with R).
+
+      --grayscale, -g
+        Start in grayscale mode (toggle with G).
 
       --help, -h, -?
         Show this help text.

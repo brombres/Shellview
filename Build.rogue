@@ -110,6 +110,10 @@ routine rogo_run
   execute File.esc( exe_filepath )
 endRoutine
 
+routine rogo_link
+  execute "morlock link $ $" (File.esc(exe_filepath),Build.LAUNCHER_NAME)
+endRoutine
+
 routine rogo_install
   rogo_build
   local exe_filepath = File.abs( exe_filepath )

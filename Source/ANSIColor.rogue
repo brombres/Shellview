@@ -74,12 +74,28 @@ class ANSIColorLookup : Byte[] [singleton]
       prior.init( 16*16*16 )
       count = 16*16*16
 
+      local is_grayscale = (ShellView.command//options//grayscale)
+
       local target_colors = Int32[](256)
-      local high_index    = which{ System.is_windows:16 || 256 }
-      local low_index     = which{ System.is_windows:0 || 16 }
       target_colors.add( (forEach in ANSIColors).color.argb )
 
+      local palette       = Int32[](240)  # indices into target_colors[]
+      if (System.is_windows or ShellView.command//options["4-bit"])
+        if (is_grayscale)
+          palette.[ add 0, add 7, add 8, add 15 ]
+        else
+          palette.add( forEach in 0..15 )
+        endIf
+      else
+        if (is_grayscale)
+          palette.add( forEach in 232..255 )
+        else
+          palette.add( forEach in 16..255 )
+        endIf
+      endIf
+
       native @|RogueInt32* target_colors = $target_colors->data->as_int32s;
+              |RogueInt32* palette = $palette->data->as_int32s;
               |RogueByte*  mapping = $this->data->as_bytes - 1;
               |
               |for (RogueInt32 r4=-1; ++r4<=15; )
@@ -90,9 +106,9 @@ class ANSIColorLookup : Byte[] [singleton]
               |    {
               |      RogueInt32 best_i = -1;
               |      RogueInt32 best_score = 0;
-              |      for (RogueInt32 i=$high_index; --i>=$low_index; )
+              |      for (RogueInt32 i=$palette->count; --i>=0; )
               |      {
-              |        RogueInt32 color = target_colors[i];
+              |        RogueInt32 color = target_colors[palette[i]];
               |        RogueInt32 dr = ((r4<<4)|r4) - ((color>>16)&255);
               |        RogueInt32 dg = ((g4<<4)|g4) - ((color>>8)&255);
               |        RogueInt32 db = ((b4<<4)|b4) - (color&255);
@@ -103,7 +119,7 @@ class ANSIColorLookup : Byte[] [singleton]
               |          best_score = score;
               |        }
               |      }
-              |      *(++mapping) = (RogueByte) best_i;
+              |      *(++mapping) = (RogueByte) palette[best_i];
               |    }
               |  }
               |}

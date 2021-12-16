@@ -54,6 +54,11 @@ class ImageView : UIComponent
       elseIf (e.is_press(Keycode.UP_ARROW) or e.is_press(Keycode.K) or e.is_press(Keycode.W))
         image_pos += XY( 0, size.y/3 )
         request_image_update
+      elseIf (e.is_press(Keycode.G))
+        ShellView.command//options//grayscale = not ShellView.command//options//grayscale->Logical
+        regenerate_image = true
+        ANSIColorLookup.init  # recompute lookup table
+        request_image_update
       elseIf (e.is_press(Keycode.I) or e.is_press(Keycode.EQUALS))
         zoom_in
       elseIf (e.is_press(Keycode.O) or e.is_press(Keycode.MINUS))
