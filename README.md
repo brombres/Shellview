@@ -14,18 +14,25 @@ ShellView is a console-based image viewer with pan and zoom. It uses character b
 ![Demo](Media/Videos/ShellView-1.1.gif)
 
 # Reference Images
-Gauntlet II | Minmei                                       | Sunflowers | Towards New Adventures! | Wizard's Crown
-------------|----------------------------------------------|------------|-------------------------|---------------------
-![Gauntlet II](Media/Thumbnails/GauntletII.jpeg) | ![Minmei](Media/Thumbnails/Minmei.jpeg) | ![Sunflowers](Media/Thumbnails/Sunflowers.jpeg) | ![Towards New Adventures!](Media/Thumbnails/TowardsNewAdventures.png) | ![Wizards's Crown](Media/Thumbnails/WizardsCrown.jpeg)
-By Atari | From Robotech/Macross | | By [Worrior1](https://twitter.com/PETSCIIWORLD/status/1388846460544987139?s=20) | By SSI
+Gauntlet II | Minmei                                       | Sunflowers
+------------|----------------------------------------------|------------
+![Gauntlet II](Media/Thumbnails/GauntletII.jpeg) | ![Minmei](Media/Thumbnails/Minmei.jpeg) | ![Sunflowers](Media/Thumbnails/Sunflowers.jpeg)
+By Atari | Robotech/Macross |
+
+Towards New Adventures! | Wizard's Crown | SDF-1
+------------------------|----------------|------
+![Towards New Adventures!](Media/Thumbnails/TowardsNewAdventures.png) |  ![Wizards's Crown](Media/Thumbnails/WizardsCrown.jpeg) | ![SDF-1](Media/Thumbnails/SDF-1.jpeg) |
+By [Worrior1](https://twitter.com/PETSCIIWORLD/status/1388846460544987139?s=20) | By SSI | Robotech/Macross
 
 
 # Installation
 
+## New Installation
+
 1. Install [morlock.sh](https://morlock.sh)
 2. `morlock install abepralle/shellview`
 
-# Updating Existing Installation
+## Updating Existing Installation
 `morlock update shellview`
 
 # Usage

@@ -109,8 +109,6 @@ class ImageView : UIComponent
       if (new_filepath == filepath) return
       filepath = new_filepath
       bitmap = Bitmap( File(filepath) )
-      # Crop off the bottom if needed to ensure an even number of rows
-      if (bitmap.height & 1) bitmap.crop( 0, 0, 0, &bottom=1 )
 
       zoom = 0
       text_bitmap = null
@@ -135,7 +133,14 @@ class ImageView : UIComponent
       local is_resizing = (not text_bitmap or text_bitmap.size != (new_size*XY(1,0.5)).floor)
       if (is_resizing or regenerate_image)
         regenerate_image = false
-        text_bitmap  = ANSIBitmap( bitmap.resized(new_size) )->TextCanvas
+
+        local work_bitmap = bitmap.resized( new_size )
+        if (work_bitmap.height & 1)
+          # Crop off the bottom if needed to ensure an even number of rows
+          work_bitmap.crop( 0, 0, 0, &bottom=1 )
+        endIf
+
+        text_bitmap  = ANSIBitmap( work_bitmap )->TextCanvas
         image_size = XY( new_size.x, new_size.y/2 ).floor
         if (should_set_image_pos)
           should_set_image_pos = false
