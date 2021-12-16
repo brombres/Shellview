@@ -251,7 +251,7 @@ routine rogo_publish( new_version:String )
   if (not Console.input("Continue publishing? ").to_lowercase.begins_with('y')) return
 
   execute "git push"
-  local cmd = ''gh release create v$"''(new_version)
+  local cmd = ''gh release create v$''(new_version)
   execute cmd
 
 endRoutine
