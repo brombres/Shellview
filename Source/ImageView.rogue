@@ -104,6 +104,9 @@ class ImageView : UIComponent
       if (new_filepath == filepath) return
       filepath = new_filepath
       bitmap = Bitmap( File(filepath) )
+      # Crop off the bottom if needed to ensure an even number of rows
+      if (bitmap.height & 1) bitmap.crop( 0, 0, 0, &bottom=1 )
+
       zoom = 0
       text_bitmap = null
       should_set_image_pos = true

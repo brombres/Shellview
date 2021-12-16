@@ -14,19 +14,19 @@ ShellView is a console-based image viewer. It uses character block graphics and 
 ![Demo](Media/Videos/ShellView-1.1.gif)
 
 # Reference Images
-Gauntlet II | Minmei                                       | Sunflowers | PETSCII Christmas
-------------|----------------------------------------------|------------|----------------------
-![Gauntlet II](Media/Thumbnails/GauntletII.jpeg) | ![Minmei](Media/Thumbnails/Minmei.jpeg) | ![Sunflowers](Media/Thumbnails/Sunflowers.jpeg) | ![PETSCII Christmas](Media/Thumbnails/Christmas.png)
+Gauntlet II | Minmei                                       | Sunflowers | Towards New Adventures! | Wizard's Crown
+------------|----------------------------------------------|------------|-------------------------|---------------------
+![Gauntlet II](Media/Thumbnails/GauntletII.jpeg) | ![Minmei](Media/Thumbnails/Minmei.jpeg) | ![Sunflowers](Media/Thumbnails/Sunflowers.jpeg) | ![Towards New Adventures!](Media/Thumbnails/TowardsNewAdventures.png) | ![Wizards's Crown](Media/Thumbnails/WizardsCrown.jpeg)
+By Atari | From Robotech/Macross | | By [Worrior1](https://twitter.com/PETSCIIWORLD/status/1388846460544987139?s=20) | By SSI
+
 
 # Installation
 
-## Morlock Install (Recommended)
 1. Install [morlock.sh](https://morlock.sh)
 2. `morlock install abepralle/shellview`
 
-## Manual Install
-1. Install [Rogue](https://github.com/AbePralle/Rogue) and [Rogo](https://github.com/AbePralle/Rogo).
-2. Clone this repo and run `rogo install`.
+# Updating Existing Installation
+`morlock update shellview`
 
 # Usage
     USAGE

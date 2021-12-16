@@ -74,9 +74,10 @@ class ANSIColorLookup : Byte[] [singleton]
       prior.init( 16*16*16 )
       count = 16*16*16
 
-      local target_colors = Int32[]
-      local color_count   = which{ System.is_windows:16 || 256 }
-      target_colors.add( ANSIColors[forEach in 0..<color_count].color.argb )
+      local target_colors = Int32[](256)
+      local high_index    = which{ System.is_windows:16 || 256 }
+      local low_index     = which{ System.is_windows:0 || 16 }
+      target_colors.add( (forEach in ANSIColors).color.argb )
 
       native @|RogueInt32* target_colors = $target_colors->data->as_int32s;
               |RogueByte*  mapping = $this->data->as_bytes - 1;
@@ -89,7 +90,7 @@ class ANSIColorLookup : Byte[] [singleton]
               |    {
               |      RogueInt32 best_i = -1;
               |      RogueInt32 best_score = 0;
-              |      for (RogueInt32 i=$color_count; --i>=0; )
+              |      for (RogueInt32 i=$high_index; --i>=$low_index; )
               |      {
               |        RogueInt32 color = target_colors[i];
               |        RogueInt32 dr = ((r4<<4)|r4) - ((color>>16)&255);

@@ -95,8 +95,9 @@ class ANSIBitmap
 
       forEach (j in 0..<even_height/2)
         forEach (i in 0..<width)
-          local bg = (Int32((pixels[src_index]))       + 1):<<: BG_SHIFT
-          local fg = (Int32((pixels[src_index+width])) + 1):<<: FG_SHIFT
+          # StyledCharacter uses index 0 as the default color and indices 1-256 as colors 0-255.
+          local bg = (Int32((pixels[src_index]))       + 1) :<<: BG_SHIFT
+          local fg = (Int32((pixels[src_index+width])) + 1) :<<: FG_SHIFT
           canvas_data[ dest_index ] = StyledCharacter( '\[2584]', bg | fg )
           ++src_index
           ++dest_index
