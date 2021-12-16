@@ -232,18 +232,40 @@ routine rogo_incv( version:String )
 
 endRoutine
 
-routine rogo_publish( version:String )
-  # For repo owner's use
-  if (not String.exists(version)) throw Error( "Expected version number after 'rogo publish'." )
-  rogo_incv( version )
+routine rogo_commit( new_version="":String )
+  if (not String.exists(new_version)) throw Error( "Expected version number after 'rogo commit'." )
+  rogo_incv( new_version )
 
   rogo_build
 
-  execute( ''git commit -am "[v$] Release"''(version), &suppress_error )
+  if (project_has_uncommitted_changes)
+    execute ''git commit -am "[v$]"'' (new_version)
+  endIf
+endRoutine
+
+routine rogo_publish( new_version:String )
+  # For repo owner's use
+  if (not String.exists(new_version)) throw Error( "Expected version number after 'rogo publish'." )
+  rogo_commit( new_version )
+
+  if (not Console.input("Continue publishing? ").to_lowercase.begins_with('y')) return
+
   execute "git push"
-  local cmd = ''gh release create v$ --title "ShellView v$"''(version,version)
+  local cmd = ''gh release create v$"''(new_version)
   execute cmd
 
+endRoutine
+
+routine project_has_uncommitted_changes->Logical
+  local result = Process.run( "git status --porcelain", &env )
+  if (not result.success)
+    Console.error.println result->String
+    System.exit 1
+  endIf
+
+  local lines = result->String.trimmed.split('\n').[discard($.begins_with("??"))]
+  lines.discard( $ == "" )
+  return not lines.is_empty
 endRoutine
 
 #-------------------------------------------------------------------------------
