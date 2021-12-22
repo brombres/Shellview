@@ -28,8 +28,8 @@ augment ConsoleUI
         Console.set_cursor( 0, bounds.y2 )
       endIf
 
-    method on( e:UIResizeEvent )
+    method on_resize
       <replace>
-      ConsoleUICanvas.resize( e.size.x, e.size.y )
-      prior.on( e )
+      ConsoleUICanvas.resize( UI.size.x, UI.size.y )
+      prior.on_resize
 endAugment
