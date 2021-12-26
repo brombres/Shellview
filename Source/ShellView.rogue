@@ -2,8 +2,8 @@
 # ShellView.rogue
 # November 14, 2021
 #================================================================================
-$define VERSION "ShellView v1.1.1"
-$define AUTHOR "December 16, 2021 by Abe Pralle"
+$define VERSION "ShellView v1.1.2"
+$define AUTHOR "December 26, 2021 by Abe Pralle"
 
 $requireRogue "1.9.6"
 

@@ -6,6 +6,6 @@ class ShellviewPackage : Package
 
   METHODS
     method init
-      dependency "abepralle/rogue@1.11"
+      dependency "abepralle/rogue@1.12"
       scan_repo_releases
 endClass
