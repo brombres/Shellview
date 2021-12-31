@@ -1,8 +1,8 @@
 #================================================================================
-# ShellView.rogue
+# Shellview.rogue
 # November 14, 2021
 #================================================================================
-$define VERSION "ShellView v1.1.2"
+$define VERSION "Shellview v1.1.2"
 $define AUTHOR "December 26, 2021 by Abe Pralle"
 
 $requireRogue "1.9.6"
@@ -18,13 +18,13 @@ uses UI/ConsoleUI
 uses Utility/CommandLineParser
 
 try
-  ShellView.init( System.command_line_arguments )
+  Shellview.init( System.command_line_arguments )
 catch (error:Error)
   Console.error.println error
   System.exit 1
 endTry
 
-class ShellView [singleton]
+class Shellview [singleton]
   PROPERTIES
     command : Value
 
@@ -98,7 +98,7 @@ class ShellView [singleton]
                |    Toggle color dithe(R)ing.
                |
                |  Q, ESCAPE
-               |    Quit ShellView.
+               |    Quit Shellview.
                |
                |OPTIONS
                |  --4-bit, -4

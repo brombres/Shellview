@@ -55,7 +55,7 @@ class ImageView : UIComponent
         image_pos += XY( 0, size.y/3 )
         request_image_update
       elseIf (e.is_press(Keycode.G))
-        ShellView.command//options//grayscale = not ShellView.command//options//grayscale->Logical
+        Shellview.command//options//grayscale = not Shellview.command//options//grayscale->Logical
         regenerate_image = true
         ANSIColorLookup.init  # recompute lookup table
         request_image_update
@@ -68,7 +68,7 @@ class ImageView : UIComponent
       elseIf (e.is_press(Keycode.B) or e.is_press(Keycode.Z))
         previous_image
       elseIf (e.is_press(Keycode.R))
-        ShellView.command//options//dither = not ShellView.command//options//dither->Logical
+        Shellview.command//options//dither = not Shellview.command//options//dither->Logical
         regenerate_image = true
         request_image_update
       endIf
@@ -180,7 +180,7 @@ class ImageView : UIComponent
       if (image_needs_update) update_image
       if (size.min == 0 or not text_bitmap) return
 
-      if (ShellView.command//options//print)
+      if (Shellview.command//options//print)
         text_bitmap.display
       else
         ConsoleUICanvas.fill( display_bounds, ' ' )

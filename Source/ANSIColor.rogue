@@ -74,13 +74,13 @@ class ANSIColorLookup : Byte[] [singleton]
       prior.init( 16*16*16 )
       count = 16*16*16
 
-      local is_grayscale = (ShellView.command//options//grayscale)
+      local is_grayscale = (Shellview.command//options//grayscale)
 
       local target_colors = Int32[](256)
       target_colors.add( (forEach in ANSIColors).color.argb )
 
       local palette       = Int32[](240)  # indices into target_colors[]
-      if (System.is_windows or ShellView.command//options["4-bit"])
+      if (System.is_windows or Shellview.command//options["4-bit"])
         if (is_grayscale)
           palette.[ add 0, add 7, add 8, add 15 ]
         else

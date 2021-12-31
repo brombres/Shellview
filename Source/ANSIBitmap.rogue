@@ -21,7 +21,7 @@ class ANSIBitmap
 
       loop (width * (height&1)) pixels.add(ANSIColors.BLACK.index)  # odd # pixels get black bottom
 
-      if (ShellView.command//options//dither)
+      if (Shellview.command//options//dither)
         # Convert colors while applying Floyd-Steinberg dithering.
         # Make alternating/serpentine passes per row.
         # https://en.wikipedia.org/wiki/Floyd%E2%80%93Steinberg_dithering
