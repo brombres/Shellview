@@ -82,7 +82,7 @@ class ANSIColorLookup : Byte[] [singleton]
       local palette       = Int32[](240)  # indices into target_colors[]
       if (System.is_windows or Shellview.command//options["4-bit"])
         if (is_grayscale)
-          palette.[ add 0, add 7, add 8, add 15 ]
+          palette.[ add(0), add(7), add(8), add(15) ]
         else
           palette.add( forEach in 0..15 )
         endIf

@@ -1,4 +1,6 @@
-uses UI/ConsoleUI
+$include UI/ConsoleUI
+uses UI
+
 uses Utility/Epilog
 uses Utility/TextCanvas
 
@@ -29,7 +31,6 @@ augment ConsoleUI
       endIf
 
     method on_resize
-      <replace>
       ConsoleUICanvas.resize( UI.size.x, UI.size.y )
       prior.on_resize
 endAugment

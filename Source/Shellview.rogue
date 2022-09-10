@@ -3,9 +3,9 @@
 # November 14, 2021
 #================================================================================
 $define VERSION "Shellview v1.1.2"
-$define AUTHOR "December 26, 2021 by Abe Pralle"
+$define DATE "December 26, 2021"
 
-$requireRogue "1.9.6"
+$requireRogue "2.0.10"
 
 $include "ANSIBitmap.rogue"
 $include "ANSIColor.rogue"
@@ -15,7 +15,7 @@ $include "ShellViewUI.rogue"
 
 uses Bitmap
 uses UI/ConsoleUI
-uses Utility/CommandLineParser
+uses Console/CommandLineParser
 
 try
   Shellview.init( System.command_line_arguments )
@@ -39,8 +39,8 @@ class Shellview [singleton]
 
       # Process wildcards in filepaths (especially Windows)
       forEach (filepath in command//args.to_list<<String>>)
-        if (filepath.contains('*') or filepath.contains('?') or File.is_folder(filepath))
-          ShellViewUI.filepaths.add( File.listing(filepath) )
+        if (filepath.contains('*') or filepath.contains('?') or File(filepath).is_folder)
+          ShellViewUI.filepaths.add( File(filepath).listing )
         else
           ShellViewUI.filepaths.add( filepath )
         endIf
@@ -49,7 +49,7 @@ class Shellview [singleton]
       if (command//options//print)
         loop (ShellViewUI.filepaths.count)
           ShellViewUI.image_view.next_image
-          ShellViewUI.update( Console.bounds )
+          ShellViewUI.update( Box(Console.width,Console.height) )
           ShellViewUI.display
           ConsoleStyle.reset
           Console.clear_to_eol
@@ -73,8 +73,8 @@ class Shellview [singleton]
       return command
 
     method print_usage
-      println VERSION
-      println AUTHOR
+      println "Shellview v$"(VERSION)
+      println "$ by Abe Pralle"(DATE)
       println
       println @|USAGE
                |  shellview [OPTIONS] [image-filepaths...]
