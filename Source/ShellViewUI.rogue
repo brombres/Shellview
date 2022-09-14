@@ -17,9 +17,10 @@ class ShellViewUI : ConsoleUI [singleton]
 
     method display
       draw( &print )
+
 endClass
 
-augment ConsoleUI
+augment UI::ConsoleUI
   METHODS
     method draw( print:Logical )
       if (print)
@@ -31,6 +32,6 @@ augment ConsoleUI
       endIf
 
     method on_resize
-      ConsoleUICanvas.resize( UI.size.x, UI.size.y )
+      ConsoleUICanvas.resize( UI.current.size.x, UI.current.size.y )
       prior.on_resize
 endAugment

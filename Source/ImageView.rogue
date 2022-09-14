@@ -126,11 +126,11 @@ class ImageView : UIComponent
         anchor = (size/2 - image_pos ) / image_size
       endIf
 
-      min_scale = (size / bitmap_size).min.clamped_high(1)
+      min_scale = (RealXY(size) / bitmap_size).min.clamped_high(1)
       max_scale = 1.0
       local scale = zoom.lerp(min_scale,max_scale)
-      local new_size = (bitmap.size * scale).floor
-      local is_resizing = (not text_bitmap or text_bitmap.size != (new_size*XY(1,0.5)).floor)
+      local new_size = (bitmap.size * scale)->XY
+      local is_resizing = (not text_bitmap or text_bitmap.size != (new_size/XY(1,2)))
       if (is_resizing or regenerate_image)
         regenerate_image = false
 
@@ -141,23 +141,23 @@ class ImageView : UIComponent
         endIf
 
         text_bitmap  = ANSIBitmap( work_bitmap )->TextCanvas
-        image_size = XY( new_size.x, new_size.y/2 ).floor
+        image_size = XY( new_size.x, new_size.y/2 )
         if (should_set_image_pos)
           should_set_image_pos = false
-          image_pos = ((size - image_size)/2).floor
+          image_pos = ((size - image_size)/2)
         endIf
       endIf
 
       if (pointer_pos)
-        image_pos = (pointer_pos.value - (anchor * image_size)).floor
+        image_pos = (pointer_pos.value - (anchor * image_size))
       elseIf (is_resizing)
-        image_pos = (size/2 - (anchor * image_size)).floor
+        image_pos = (size/2 - (anchor * image_size))
       endIf
 
       local x = image_pos.x
       local y = image_pos.y
       if (image_size.x <= size.x)
-        x = ((size.x - image_size.x)/2).floor
+        x = ((size.x - image_size.x)/2)
       else
         if (x > 0)
           x = 0
@@ -166,7 +166,7 @@ class ImageView : UIComponent
         endIf
       endIf
       if (image_size.y <= size.y)
-        y = ((size.y - image_size.y)/2).floor
+        y = ((size.y - image_size.y)/2)
       else
         if (y > 0)
           y = 0

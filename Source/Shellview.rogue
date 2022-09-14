@@ -14,8 +14,9 @@ $include "RGB.rogue"
 $include "ShellViewUI.rogue"
 
 uses Bitmap
-uses UI/ConsoleUI
+uses Bitmap/IO
 uses Console/CommandLineParser
+uses UI/ConsoleUI
 
 try
   Shellview.init( System.command_line_arguments )

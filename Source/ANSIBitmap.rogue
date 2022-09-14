@@ -27,11 +27,11 @@ class ANSIBitmap
         # https://en.wikipedia.org/wiki/Floyd%E2%80%93Steinberg_dithering
         local error = Dim<<RGB>>( (width+2) * (even_height+1) )
 
-        local src_data  = source.pixels.data
+        local src_data  = source.pixels
         local src_i     = 0
         local src_w     = width
-        local dest_data = pixels.data
-        local err_data  = error.data
+        local dest_data = pixels
+        local err_data  = error
         local err_i     = 1
         local err_w     = width + 2
 
@@ -71,9 +71,9 @@ class ANSIBitmap
         endForEach
 
       else
-        local lookup = ANSIColorLookup.data
-        native @|RogueInt32* src = $source->pixels->data->as_int32s - 1;
-                |RogueByte* dest = $pixels->data->as_bytes - 1;
+        local lookup = ANSIColorLookup
+        native @|RogueInt32* src = $source->pixels->as_int32s - 1;
+                |RogueByte* dest = $pixels->as_bytes - 1;
                 |RogueByte* lookup = $lookup->as_bytes;
                 |
                 |for (int i=$width*$height; --i>=0; )
