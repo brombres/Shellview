@@ -7,14 +7,13 @@ $define DATE "December 26, 2021"
 
 $requireRogue "2.0.10"
 
-$include "ANSIBitmap.rogue"
-$include "ANSIColor.rogue"
 $include "ImageView.rogue"
 $include "RGB.rogue"
 $include "ShellViewUI.rogue"
 
 uses Bitmap
 uses Bitmap/IO
+uses Console/ANSIBitmap
 uses Console/CommandLineParser
 uses UI/ConsoleUI
 

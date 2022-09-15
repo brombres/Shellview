@@ -140,7 +140,7 @@ class ImageView : UIComponent
           work_bitmap.crop( 0, 0, 0, &bottom=1 )
         endIf
 
-        text_bitmap  = ANSIBitmap( work_bitmap )->TextCanvas
+        text_bitmap  = ANSIBitmap( work_bitmap, &dither=Shellview.command//options//dither->Logical )->TextCanvas
         image_size = XY( new_size.x, new_size.y/2 )
         if (should_set_image_pos)
           should_set_image_pos = false

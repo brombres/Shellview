@@ -4,6 +4,13 @@
 
 $requireRogue "2.0.8"
 
+#$ LIBRARIES(macOS)   = libjpeg
+#$ LIBRARIES(macOS)   = libpng
+#$ LIBRARIES(macOS)   = zlib(flags:-lz)
+#$ LIBRARIES(Linux)   = libjpeg(install:libjpeg-dev)
+#$ LIBRARIES(Linux)   = libpng(install:libpng-dev)
+#$ LIBRARIES(Windows) = abepralle/windowsmedialibs
+
 augment Build
   # You can create a Local.settings file with overrides for these values, e.g.:
   # BUILD_MODE = release
