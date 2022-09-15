@@ -21,8 +21,9 @@ augment Build
     BUILD_MODE       = "debug"
     LAUNCHER_FOLDER  = "/usr/local/bin"
     ROGUEC_FLAGS     = ""
-    CC_FLAGS_UNIX    = ""
-    CC_FLAGS_WINDOWS = ""
+    CC_ARGS_UNIX    = ""
+    CC_ARGS_WINDOWS = ""
+    CC_LINK_WINDOWS = "/link /LTCG"
 endAugment
 
 routine rogo_default
@@ -286,15 +287,16 @@ routine compile_c
   local c_filepath = File( "Build/$-$" (Build.PROJECT,System.os) ).esc
   local exe_filepath = exe_file.esc
   if (System.is_windows)
-    local flags = Build.CC_FLAGS_WINDOWS
+    local flags = Build.CC_ARGS_WINDOWS
     if (flags != "") flags += " "
     flags += which{ Build.BUILD_MODE=="release":"/O2" || "/Od" }
     local obj_filepath = File( "Build/$-Windows.obj"(Build.PROJECT) ).esc
     local cc = "cl $ /nologo $.c /Fo$ /Fe$" (flags,c_filepath,obj_filepath,exe_filepath)
     cc .= appending( "$LIBRARY_FLAGS" )
+    cc .= appending( Build.CC_LINK_WINDOWS )
     execute cc
   else
-    local flags = Build.CC_FLAGS_UNIX
+    local flags = Build.CC_ARGS_UNIX
     if (flags != "") flags += " "
     flags += which{ Build.BUILD_MODE=="release":"-O3" || "-O0" }
     local cc = "cc $ -Wall -fno-strict-aliasing $.c -o $ -lm" (flags,File(c_filepath).esc,exe_file.esc)
