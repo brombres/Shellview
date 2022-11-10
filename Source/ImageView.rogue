@@ -18,7 +18,7 @@ class ImageView : UIComponent
     is_dragging   = false
     image_needs_update = false
     regenerate_image   = false
-    should_set_image_pos = true
+    should_center_image = true
 
   METHODS
     method init
@@ -112,18 +112,20 @@ class ImageView : UIComponent
 
       zoom = 0
       text_bitmap = null
-      should_set_image_pos = true
+      should_center_image = true
       request_image_update
 
     method update_image
       image_needs_update = false
       local bitmap_size = XY( bitmap.width, (bitmap.height+1)/2 )
 
-      local anchor : XY
-      if (pointer_pos and text_bitmap)
-        anchor = (pointer_pos.value - image_pos ) / image_size
-      else
-        anchor = (size/2 - image_pos ) / image_size
+      local anchor = RealXY(0.5,0.5)
+      if (not image_size.is_zero)
+        if (pointer_pos and text_bitmap)
+          anchor = RealXY(pointer_pos.value - image_pos) / image_size
+        else
+          anchor = RealXY(size/2 - image_pos ) / image_size
+        endIf
       endIf
 
       min_scale = (RealXY(size) / bitmap_size).min.clamped_high(1)
@@ -142,8 +144,8 @@ class ImageView : UIComponent
 
         text_bitmap  = ANSIBitmap( work_bitmap, &dither=Shellview.command//options//dither->Logical )->TextCanvas
         image_size = XY( new_size.x, new_size.y/2 )
-        if (should_set_image_pos)
-          should_set_image_pos = false
+        if (should_center_image)
+          should_center_image = false
           image_pos = ((size - image_size)/2)
         endIf
       endIf
