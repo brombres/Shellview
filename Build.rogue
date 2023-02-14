@@ -1,4 +1,4 @@
-# To run this build file, install Rogue from github.com/AbePralle/Rogue then cd
+# To run this build file, install Rogue from github.com/brombres/Rogue then cd
 # to this folder and type "rogo" at the command line, or "rogo help" for a list
 # of supported commands.
 
@@ -9,7 +9,7 @@ $requireRogue "2.0.8"
 #$ LIBRARIES(macOS)   = zlib(flags:-lz)
 #$ LIBRARIES(Linux)   = libjpeg(install:libjpeg-dev)
 #$ LIBRARIES(Linux)   = libpng(install:libpng-dev)
-#$ LIBRARIES(Windows) = abepralle/windowsmedialibs
+#$ LIBRARIES(Windows) = brombres/windowsmedialibs
 
 augment Build
   # You can create a Local.settings file with overrides for these values, e.g.:

@@ -5,7 +5,7 @@ Summary   | Current Release
 Version   | 2.1
 Date      | November 9, 2022
 Platforms | macOS, Linux (Ubuntu+), Windows
-Author    | Abe Pralle
+Author    | Brom Bresenham
 
 # About
 ShellView is a console-based image viewer with pan and zoom. It uses character block graphics and ANSI colors to display JPEGs, PNGs, and BMPs. macOS and Linux utilize 256 color mode; Windows uses 16 color mode.
@@ -30,7 +30,7 @@ By [Worrior1](https://twitter.com/PETSCIIWORLD/status/1388846460544987139?s=20) 
 ## New Installation
 
 1. Install [morlock.sh](https://morlock.sh)
-2. `morlock install abepralle/shellview`
+2. `morlock install brombres/shellview`
 
 ## Updating Existing Installation
 `morlock update shellview`

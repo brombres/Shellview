@@ -74,7 +74,7 @@ class Shellview [singleton]
 
     method print_usage
       println "Shellview v$"(VERSION)
-      println "$ by Abe Pralle"(DATE)
+      println "$ by Brom Bresenham"(DATE)
       println
       println @|USAGE
                |  shellview [OPTIONS] [image-filepaths...]
