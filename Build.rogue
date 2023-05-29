@@ -2,7 +2,12 @@
 # to this folder and type "rogo" at the command line, or "rogo help" for a list
 # of supported commands.
 
-$requireRogue "2.0.8"
+$requireRogue "2.18"
+
+uses Utility/VersionNumber
+
+#$ LINK_LIBS            = true
+   # Link the following in when compiling this Build.rogue
 
 #$ LIBRARIES(macOS)   = libjpeg
 #$ LIBRARIES(macOS)   = libpng
@@ -10,6 +15,11 @@ $requireRogue "2.0.8"
 #$ LIBRARIES(Linux)   = libjpeg(install:libjpeg-dev)
 #$ LIBRARIES(Linux)   = libpng(install:libpng-dev)
 #$ LIBRARIES(Windows) = brombres/windowsmedialibs
+#$ CC_LINK(macOS)     = -I /System/Libraries/Frameworks -framework Foundation -framework AppKit
+#$ CC_LINK(Windows)   = /link /LTCG
+
+uses Graphics
+uses Graphics/BitmapIO
 
 augment Build
   # You can create a Local.settings file with overrides for these values, e.g.:
@@ -18,12 +28,15 @@ augment Build
     PROJECT          = "Shellview"
     LAUNCHER_NAME    = PROJECT.to_lowercase : String
 
-    BUILD_MODE       = "debug"
+    BUILD_MODE       = "debug"  # set to "debug" or "release"
     LAUNCHER_FOLDER  = "/usr/local/bin"
     ROGUEC_FLAGS     = ""
-    CC_ARGS_UNIX    = ""
-    CC_ARGS_WINDOWS = ""
-    CC_LINK_WINDOWS = "/link /LTCG"
+    CC_ARGS_MACOS    = ""
+    CC_LINK_MACOS    = "-I /System/Libraries/Frameworks -framework Foundation -framework AppKit"
+    CC_ARGS_UNIX     = ""
+    CC_LINK_UNIX     = ""
+    CC_ARGS_WINDOWS  = ""
+    CC_LINK_WINDOWS  = "/link /LTCG"
 endAugment
 
 routine rogo_default
@@ -151,9 +164,37 @@ routine rogo_uninstall
   if (not System.is_windows) verbose_delete( "$/$"(launcher_folder,Build.LAUNCHER_NAME) )
 endRoutine
 
+routine current_version->String
+  contingent
+    local file = File("Source/$.rogue"(Build.PROJECT))
+    necessary (file.exists)
+
+    local v = String(file).extract_string( ''*define VERSION "$"*'' )
+    necessary (v and v.count)
+    return v
+  endContingent
+
+  contingent
+    local file = File("README.md")
+    necessary (file.exists)
+
+    if local line = String(file).split('\n').find( $.contains_pattern("Version|$(I)") )
+      local v = line.after_first('|').trimmed
+      necessary (v.count)
+      return v
+    endIf
+  endContingent
+
+  return "(none)"
+endRoutine
+
 routine rogo_update_version( version:String )
   # Updates the version number and date in the project source and README.md.
-  if (version.count == 0) throw Error( "New version number expected, e.g. '1.0.2'." )
+  localize current_version
+  if (version.count == 0) throw Error( "New version number expected, e.g. '1.0.2'. Current version: $"(current_version) )
+  if (current_version != "(none)" and VersionNumber(version) <= current_version)
+    error.println( "[WARNING] The new version number ($) is not higher than the current version number ($)."(version,current_version) )
+  endIf
 
   block file = File( "Source/Shellview.rogue" )
     if (file.exists)
@@ -201,7 +242,7 @@ endRoutine
 
 routine rogo_commit( new_version:String )
   # Updates source and README version number and git-commits with a version number message.
-  if (not String.exists(new_version)) throw Error( "Expected version number after 'rogo commit'." )
+  if (not String.exists(new_version)) throw Error( "Expected version number after 'rogo commit'. Current version: $"(current_version) )
   rogo_update_version( new_version )
 
   if (not System.find_executable("git")) throw Error( "Git must be installed." )
@@ -226,7 +267,7 @@ endRoutine
 
 routine rogo_publish( new_version:String )
   # Updates source and README version number, commits, and publishes a release to GitHub.
-  if (not String.exists(new_version)) throw Error( "Expected version number after 'rogo publish'." )
+  if (not String.exists(new_version)) throw Error( "Expected version number after 'rogo publish'. Current version: $"(current_version) )
   if (not System.find_executable("gh")) throw Error( "The GitHub command line tool 'gh' must be installed." )
   rogo_commit( new_version )
 
@@ -271,16 +312,13 @@ routine compile_rogue
   local c_filepath = "Build/$-$" (Build.PROJECT,System.os)
   local flags = Build.ROGUEC_FLAGS
   if (Build.BUILD_MODE == "debug") flags = flags.with_suffix(' ') + "--debug"
-  local cmd = "roguec $ $ --main --output=$ --target=Console,C,$"...
-              (File(src_filepath).esc,flags,File(c_filepath).esc,System.os)
+  local targets = "--target=Console,C,$"(System.os)
+  if (System.is_macos) targets += ",ObjC"
+  local cmd = "roguec $ $ --main --output=$ $"...
+              (File(src_filepath).esc,flags,File(c_filepath).esc,targets)
   println "> " + cmd
-  local status = Process.run( cmd, &env )
-  local result = status->String
-  println result
-  if (not status.success) throw Error( "Build failed." )
-  if (result.contains("ROGO:"))
-    System.exit( execute("rogo".appending(System.command_line_arguments.join(' '))) )
-  endIf
+  local error = System.run( cmd )
+  if (error) throw Error( "Build failed." )
 endRoutine
 
 routine compile_c
@@ -295,12 +333,21 @@ routine compile_c
     cc .= appending( "$LIBRARY_FLAGS" )
     cc .= appending( Build.CC_LINK_WINDOWS )
     execute cc
+  elseIf (System.is_macos)
+    local flags = Build.CC_ARGS_MACOS
+    if (flags != "") flags += " "
+    flags += which{ Build.BUILD_MODE=="release":"-O3" || "-O0" }
+    local cc = "cc $ -Wall -fno-strict-aliasing $.m -o $ -lm" (flags,File(c_filepath).esc,exe_file.esc)
+    cc .= appending( "$LIBRARY_FLAGS" )
+    cc .= appending( Build.CC_LINK_MACOS )
+    execute cc
   else
     local flags = Build.CC_ARGS_UNIX
     if (flags != "") flags += " "
     flags += which{ Build.BUILD_MODE=="release":"-O3" || "-O0" }
     local cc = "cc $ -Wall -fno-strict-aliasing $.c -o $ -lm" (flags,File(c_filepath).esc,exe_file.esc)
     cc .= appending( "$LIBRARY_FLAGS" )
+    cc .= appending( Build.CC_LINK_UNIX )
     execute cc
   endIf
 endRoutine

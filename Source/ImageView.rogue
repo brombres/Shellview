@@ -1,4 +1,4 @@
-uses Bitmap
+uses Graphics
 uses UI/ConsoleUI
 uses Utility/Epilog
 uses Utility/TextCanvas

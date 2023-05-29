@@ -11,8 +11,8 @@ $include "ImageView.rogue"
 $include "RGB.rogue"
 $include "ShellViewUI.rogue"
 
-uses Bitmap
-uses Bitmap/IO
+uses Graphics
+uses Graphics/BitmapIO
 uses Console/ANSIBitmap
 uses Console/CommandLineParser
 uses UI/ConsoleUI

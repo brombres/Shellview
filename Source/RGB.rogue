@@ -1,4 +1,4 @@
-uses Bitmap
+uses Graphics
 
 class RGB( red:Real64, green:Real64, blue:Real64 ) [compound]
   GLOBAL METHODS
