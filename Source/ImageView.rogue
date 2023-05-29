@@ -109,6 +109,7 @@ class ImageView : UIComponent
       if (new_filepath == filepath) return
       filepath = new_filepath
       bitmap = Bitmap( File(filepath) )
+      if (not bitmap) bitmap = Bitmap(1,1)
 
       zoom = 0
       text_bitmap = null
