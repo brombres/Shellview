@@ -2,8 +2,8 @@
 # Shellview.rogue
 # November 14, 2021
 #================================================================================
-$define VERSION "2.1.1"
-$define DATE    "February 14, 2023"
+$define VERSION "2.2"
+$define DATE    "June 3, 2023"
 
 $requireRogue "2.0.10"
 
