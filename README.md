@@ -2,8 +2,8 @@
 
 Summary   | Current Release
 ----------|-----------------------
-Version   | 2.2
-Date      | June 3, 2023
+Version   | 2.3
+Date      | July 29, 2023
 Platforms | macOS, Linux (Ubuntu+), Windows
 Author    | Brom Bresenham
 
