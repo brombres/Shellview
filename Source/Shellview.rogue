@@ -49,7 +49,7 @@ class Shellview [singleton]
       if (command//options//print)
         loop (ShellViewUI.filepaths.count)
           ShellViewUI.image_view.next_image
-          ShellViewUI.update( Box(Console.width,Console.height) )
+          ShellViewUI.update( IntBox(Console.width,Console.height) )
           ShellViewUI.display
           ConsoleStyle.reset
           Console.clear_to_eol

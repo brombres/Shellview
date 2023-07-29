@@ -10,11 +10,11 @@ class ImageView : UIComponent
     text_bitmap   : TextCanvas
     min_scale     : Real64
     max_scale     : Real64
-    image_pos     : XY
-    image_size    : XY
-    pointer_pos   : XY?
+    image_pos     : IntXY
+    image_size    : IntXY
+    pointer_pos   : IntXY?
     zoom          = 0.0
-    drag_origin   : XY?
+    drag_origin   : IntXY?
     is_dragging   = false
     image_needs_update = false
     regenerate_image   = false
@@ -38,21 +38,21 @@ class ImageView : UIComponent
         if (zoom == 0 or min_scale == max_scale)
           previous_image
         else
-          image_pos += XY( size.x/3, 0 )
+          image_pos += IntXY( size.x/3, 0 )
           request_image_update
         endIf
       elseIf (e.is_press(Keycode.RIGHT_ARROW) or e.is_press(Keycode.L) or e.is_press(Keycode.D))
         if (zoom == 0 or min_scale == max_scale)
           next_image
         else
-          image_pos -= XY( size.x/3, 0 )
+          image_pos -= IntXY( size.x/3, 0 )
           request_image_update
         endIf
       elseIf (e.is_press(Keycode.DOWN_ARROW) or e.is_press(Keycode.J) or e.is_press(Keycode.S))
-        image_pos -= XY( 0, size.y/3 )
+        image_pos -= IntXY( 0, size.y/3 )
         request_image_update
       elseIf (e.is_press(Keycode.UP_ARROW) or e.is_press(Keycode.K) or e.is_press(Keycode.W))
-        image_pos += XY( 0, size.y/3 )
+        image_pos += IntXY( 0, size.y/3 )
         request_image_update
       elseIf (e.is_press(Keycode.G))
         Shellview.command//options//grayscale = not Shellview.command//options//grayscale->Logical
@@ -118,22 +118,22 @@ class ImageView : UIComponent
 
     method update_image
       image_needs_update = false
-      local bitmap_size = XY( bitmap.width, (bitmap.height+1)/2 )
+      local bitmap_size = IntXY( bitmap.width, (bitmap.height+1)/2 )
 
-      local anchor = RealXY(0.5,0.5)
+      local anchor = XY(0.5,0.5)
       if (not image_size.is_zero)
         if (pointer_pos and text_bitmap)
-          anchor = RealXY(pointer_pos.value - image_pos) / image_size
+          anchor = XY(pointer_pos.value - image_pos) / image_size
         else
-          anchor = RealXY(size/2 - image_pos ) / image_size
+          anchor = XY(size/2 - image_pos ) / image_size
         endIf
       endIf
 
-      min_scale = (RealXY(size) / bitmap_size).min.clamped_high(1)
+      min_scale = (XY(size) / bitmap_size).min.clamped_high(1)
       max_scale = 1.0
       local scale = zoom.lerp(min_scale,max_scale)
-      local new_size = (bitmap.size * scale)->XY
-      local is_resizing = (not text_bitmap or text_bitmap.size != (new_size/XY(1,2)))
+      local new_size = (bitmap.size * scale)->IntXY
+      local is_resizing = (not text_bitmap or text_bitmap.size != (new_size/IntXY(1,2)))
       if (is_resizing or regenerate_image)
         regenerate_image = false
 
@@ -144,7 +144,7 @@ class ImageView : UIComponent
         endIf
 
         text_bitmap  = ANSIBitmap( work_bitmap, &dither=Shellview.command//options//dither->Logical )->TextCanvas
-        image_size = XY( new_size.x, new_size.y/2 )
+        image_size = IntXY( new_size.x, new_size.y/2 )
         if (should_center_image)
           should_center_image = false
           image_pos = ((size - image_size)/2)
@@ -177,7 +177,7 @@ class ImageView : UIComponent
           y = size.y - image_size.y
         endIf
       endIf
-      image_pos = XY(x,y)
+      image_pos = IntXY(x,y)
 
     method on_draw
       if (image_needs_update) update_image
